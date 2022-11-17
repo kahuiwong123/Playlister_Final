@@ -6,6 +6,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Collapse from '@mui/material/Collapse';
+import WorkspaceScreen from './WorkspaceScreen';
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -19,20 +23,30 @@ function ListCard(props) {
     const [editActive, setEditActive] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
+    const [open, setOpen] = useState(false);
 
-    function handleLoadList(event, id) {
-        console.log("handleLoadList for " + id);
+    function handleClick(event, id) {
         if (!event.target.disabled) {
-            let _id = event.target.id;
-            if (_id.indexOf('list-card-text-') >= 0)
-                _id = ("" + _id).substring("list-card-text-".length);
-
-            console.log("load " + event.target.id);
-
-            // CHANGE THE CURRENT LIST
-            store.setCurrentList(id);
+            store.getCurrentList(id)
         }
+        setOpen(!open)
     }
+
+    // function handleLoadList(event, id) {
+    //     console.log("handleLoadList for " + id);
+    //     if (!event.target.disabled) {
+    //         let _id = event.target.id;
+    //         if (_id.indexOf('list-card-text-') >= 0)
+    //             _id = ("" + _id).substring("list-card-text-".length);
+
+    //         console.log("load " + event.target.id);
+
+    //         // CHANGE THE CURRENT LIST
+    //         // store.setCurrentList(id);
+    //     }
+
+    //     setOpen(!open)
+    // }
 
     function handleToggleEdit(event) {
         event.stopPropagation();
@@ -48,6 +62,7 @@ function ListCard(props) {
     }
 
     async function handleDeleteList(event, id) {
+        console.log(id)
         event.stopPropagation();
         let _id = event.target.id;
         _id = ("" + _id).substring("delete-list-".length);
@@ -74,30 +89,35 @@ function ListCard(props) {
         cardStatus = true;
     }
     let cardElement =
-        <ListItem
-            id={idNamePair._id}
-            key={idNamePair._id}
-            sx={{ marginTop: '15px', display: 'flex', p: 1 }}
-            style={{ width: '100%', fontSize: '48pt' }}
-            button
-            onClick={(event) => {
-                handleLoadList(event, idNamePair._id)
-            }}
-        >
-            <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
-            <Box sx={{ p: 1 }}>
-                <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                    <EditIcon style={{fontSize:'48pt'}} />
-                </IconButton>
-            </Box>
-            <Box sx={{ p: 1 }}>
-                <IconButton onClick={(event) => {
+        <Box>
+            <ListItem
+                id={idNamePair._id}
+                key={idNamePair._id}
+                sx={{ borderRadius: 4, "&:hover": { backgroundColor: "#4dabf5" }, bgcolor: "#2196f3", height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center" }}
+                button
+                onClick={event => handleClick(event, idNamePair._id)}
+            >
+                <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
+                <Box sx={{ p: 1 }}>
+                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
+                        <EditIcon style={{ fontSize: '24pt' }} />
+                    </IconButton>
+                </Box>
+                <Box sx={{ p: 1 }}>
+                    <IconButton onClick={(event) => {
                         handleDeleteList(event, idNamePair._id)
                     }} aria-label='delete'>
-                    <DeleteIcon style={{fontSize:'48pt'}} />
-                </IconButton>
-            </Box>
-        </ListItem>
+                        <DeleteIcon style={{ fontSize: '24pt' }} />
+                    </IconButton>
+                </Box>
+                {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+            </Collapse>
+        </Box>
 
     if (editActive) {
         cardElement =
@@ -113,8 +133,8 @@ function ListCard(props) {
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
-                inputProps={{style: {fontSize: 48}}}
-                InputLabelProps={{style: {fontSize: 24}}}
+                inputProps={{ style: { fontSize: 48 } }}
+                InputLabelProps={{ style: { fontSize: 24 } }}
                 autoFocus
             />
     }

@@ -28,6 +28,7 @@ body {
   left: 10%;
   height: 90%;
   top: 5%;
+  box-shadow: 0 8px 8px -4px grey;
 }
 
 #app-root {

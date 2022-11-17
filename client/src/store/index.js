@@ -384,11 +384,18 @@ function GlobalStoreContextProvider(props) {
                         type: GlobalStoreActionType.SET_CURRENT_LIST,
                         payload: playlist
                     });
-                    history.push("/playlist/" + playlist._id);
+                    // history.push("/playlist/" + playlist._id);
                 }
             }
         }
         asyncSetCurrentList(id);
+    }
+
+    store.getCurrentList = async (id) => {
+        let response = await api.getPlaylistById(id)
+        if (response.data.success) {
+            console.log(response.data.playlist)
+        }
     }
 
     store.getPlaylistSize = function () {
