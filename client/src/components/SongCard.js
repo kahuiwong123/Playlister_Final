@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
-
+import Box from "@mui/material/Box"
+import ClearIcon from '@mui/icons-material/Clear';
+import { IconButton } from '@mui/material';
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [draggedTo, setDraggedTo] = useState(0);
-    const { song, index } = props;
+    const { song, index, playlist } = props;
 
     function handleDragStart(event) {
         event.dataTransfer.setData("song", index);
@@ -31,25 +33,23 @@ function SongCard(props) {
         setDraggedTo(false);
 
         // UPDATE THE LIST
-        store.addMoveSongTransaction(sourceIndex, targetIndex);
+        store.addMoveSongTransaction(playlist, sourceIndex, targetIndex);
     }
     function handleRemoveSong(event) {
-        console.log(index)
-        store.showRemoveSongModal(index, song);
+        store.showRemoveSongModal(playlist, index, song);
     }
+
     function handleClick(event) {
         // DOUBLE CLICK IS FOR SONG EDITING
         if (event.detail === 2) {
-            store.showEditSongModal(index, song);
+            store.showEditSongModal(playlist, index, song);
         }
     }
 
-    let cardClass = "list-card unselected-list-card";
     return (
-        <div
+        <Box sx={{ display: "flex", alignItems: "center", bgcolor: "white", justifyContent: "space-between", flexDirection: "row", fontSize: 18, p: 1, borderRadius: 3, my: 1, mx: 2 }}
             key={index}
             id={'song-' + index + '-card'}
-            className={cardClass}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
@@ -58,7 +58,7 @@ function SongCard(props) {
             draggable="true"
             onClick={handleClick}
         > <span>
-                {index + 1}. 
+                {index + 1}.
                 <a
                     id={'song-' + index + '-link'}
                     className="song-link"
@@ -66,14 +66,10 @@ function SongCard(props) {
                     {song.title} by {song.artist}
                 </a>
             </span>
-            <input
-                type="button"
-                id={"remove-song-" + index}
-                className="list-card-button"
-                value={"\u2715"}
-                onClick={handleRemoveSong}
-            />
-        </div>
+            <IconButton onClick={handleRemoveSong}>
+                <ClearIcon fontSize="large" />
+            </IconButton>
+        </Box>
     );
 }
 

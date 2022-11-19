@@ -10,19 +10,20 @@ import jsTPS_Transaction from "../common/jsTPS.js"
  * @author ?
  */
 export default class UpdateSong_Transaction extends jsTPS_Transaction {
-    constructor(initStore, initIndex, initOldSongData, initNewSongData) {
+    constructor(initStore, playlist, initIndex, initOldSongData, initNewSongData) {
         super();
         this.store = initStore;
+        this.playlist = playlist
         this.index = initIndex;
         this.oldSongData = initOldSongData;
         this.newSongData = initNewSongData;
     }
 
     doTransaction() {
-        this.store.updateSong(this.index, this.newSongData);
+        this.store.updateSong(this.playlist, this.index, this.newSongData);
     }
     
     undoTransaction() {
-        this.store.updateSong(this.index, this.oldSongData);
+        this.store.updateSong(this.playlist, this.index, this.oldSongData);
     }
 }

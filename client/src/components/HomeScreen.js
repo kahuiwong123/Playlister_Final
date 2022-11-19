@@ -9,7 +9,6 @@ import { Box } from "@mui/material"
     @author McKilla Gorilla
 */
 const HomeScreen = () => {
-    const { store } = useContext(GlobalStoreContext);
     return (
         <Box sx={{display: "flex", flexDirection: "column"}}>
             <PlaylistToolbar />

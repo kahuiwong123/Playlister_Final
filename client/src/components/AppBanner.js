@@ -72,14 +72,6 @@ export default function AppBanner() {
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
 
-    let editToolbar = "";
-    let menu = loggedOutMenu;
-    if (auth.loggedIn) {
-        menu = loggedInMenu;
-        if (store.currentList) {
-            editToolbar = <EditToolbar />;
-        }
-    }
 
     function getAccountMenu(loggedIn) {
         let userInitials = auth.getUserInitials();
@@ -88,6 +80,13 @@ export default function AppBanner() {
             return <div>{userInitials}</div>;
         else
             return <AccountCircle />;
+    }
+
+    function getLogo(loggedIn) {
+        if (loggedIn) {
+            return <Typography sx={{fontSize: 24}}>Playlister</Typography>
+        }
+        return <Link style={{ textDecoration: 'none', color: 'white' }} to='/'>⌂</Link>
     }
 
     return (
@@ -100,9 +99,9 @@ export default function AppBanner() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        <Link style={{ textDecoration: 'none', color: 'white' }} to='/'>⌂</Link>
+                        {getLogo(auth.loggedIn)}
                     </Typography>
-                    <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
+                    <Box sx={{ flexGrow: 1 }}></Box>
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
                             size="large"
@@ -118,9 +117,6 @@ export default function AppBanner() {
                     </Box>
                 </Toolbar>
             </AppBar>
-            {
-                menu
-            }
         </Box>
     );
 }

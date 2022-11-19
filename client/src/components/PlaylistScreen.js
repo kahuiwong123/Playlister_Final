@@ -1,11 +1,11 @@
 import React from 'react'
 import { useEffect, useContext } from 'react';
 import { GlobalStoreContext } from '../store'
-import { Box, List } from '@mui/material';
+import { Box, List, Button } from '@mui/material';
 import ListCard from './ListCard';
 import MUIDeleteModal from './MUIDeleteModal';
 import AddIcon from '@mui/icons-material/Add';
-import { Fab, Typography, Button } from '@mui/material';
+
 const PlaylistScreen = () => {
     const { store } = useContext(GlobalStoreContext);
 
@@ -16,11 +16,10 @@ const PlaylistScreen = () => {
     function handleCreateNewList() {
         store.createNewList();
     }
-    let listCard = "";
-
+    
     return (
         <Box sx={{display: "flex", flexDirection: "column", bgcolor: "#e0e0e0"}}>
-            <Box sx={{ width: "55%", height: "450px", overflow: "scroll", px: 2, py: 1}}>
+            <Box sx={{ width: "55%", height: "450px", overflow: "scroll", px: 2, py: 1, border: "#bdbdbd"}}>
                 <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                     {store && store.idNamePairs.map((pair) => (
                         <ListCard

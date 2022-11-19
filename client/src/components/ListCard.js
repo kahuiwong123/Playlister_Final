@@ -9,8 +9,7 @@ import TextField from '@mui/material/TextField';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
-import WorkspaceScreen from './WorkspaceScreen';
-
+import SongScreen from './SongScreen';
 /*
     This is a card in our list of top 5 lists. It lets select
     a list for editing and it has controls for changing its 
@@ -21,32 +20,18 @@ import WorkspaceScreen from './WorkspaceScreen';
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
+    const [playlist, setPlaylist] = useState(null)
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
     const [open, setOpen] = useState(false);
 
-    function handleClick(event, id) {
-        if (!event.target.disabled) {
-            store.getCurrentList(id)
+    async function handleClick(event, id) {
+        if (!open) {
+            let playlist = await store.getCurrentList(id)
+            setPlaylist(playlist)
         }
         setOpen(!open)
     }
-
-    // function handleLoadList(event, id) {
-    //     console.log("handleLoadList for " + id);
-    //     if (!event.target.disabled) {
-    //         let _id = event.target.id;
-    //         if (_id.indexOf('list-card-text-') >= 0)
-    //             _id = ("" + _id).substring("list-card-text-".length);
-
-    //         console.log("load " + event.target.id);
-
-    //         // CHANGE THE CURRENT LIST
-    //         // store.setCurrentList(id);
-    //     }
-
-    //     setOpen(!open)
-    // }
 
     function handleToggleEdit(event) {
         event.stopPropagation();
@@ -93,7 +78,7 @@ function ListCard(props) {
             <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{ borderRadius: 4, "&:hover": { backgroundColor: "#4dabf5" }, bgcolor: "#2196f3", height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center" }}
+                sx={{  "&:hover": { backgroundColor: "#4dabf5" }, bgcolor: "#2196f3", height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center" }}
                 button
                 onClick={event => handleClick(event, idNamePair._id)}
             >
@@ -112,10 +97,8 @@ function ListCard(props) {
                 </Box>
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <div>1</div>
-                <div>2</div>
-                <div>3</div>
+            <Collapse in={open} timeout="auto" unmountOnExit sx={{bgcolor: "#2196f3"}}>
+                <SongScreen playlist={playlist} />
             </Collapse>
         </Box>
 

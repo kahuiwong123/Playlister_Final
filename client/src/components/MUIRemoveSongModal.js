@@ -17,7 +17,7 @@ const style = {
     borderRadius: "10px"
 };
 
-export default function MUIRemoveSongModal() {
+export default function MUIRemoveSongModal(props) {
     const { store } = useContext(GlobalStoreContext);
 
     function handleConfirmRemoveSong() {
@@ -39,7 +39,7 @@ export default function MUIRemoveSongModal() {
 
     return (
         <Modal
-            open={store.currentSong !== null}
+            open={store.currentSong !== null && store.currentList !== null}
         >
             <Box sx={style}>
                 <div
@@ -52,7 +52,7 @@ export default function MUIRemoveSongModal() {
                         </div>
                         <div className="modal-center">
                             <div className="modal-center-content">
-                                Are you sure you wish to permanently remove {songTitle} from the playlist?
+                                Are you sure you wish to permanently remove {songTitle} from the {store.currentList.name} playlist?
                             </div>
                         </div>
                         <div className="modal-south">
