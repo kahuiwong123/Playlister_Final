@@ -65,7 +65,7 @@ function SongScreen(props) {
                 <Button variant='contained'  onClick={handleAddNewSong} startIcon={<AddIcon/>} sx={{width: "93%", borderRadius: 3, my: 1, p: 2, fontSize: 18 }}></Button>
                 </Box>
             </List>
-            <EditToolbar />
+            <EditToolbar playlist={props.playlist}/>
             {modalJSX}
         </Box>
     )

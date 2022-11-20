@@ -29,6 +29,8 @@ function ListCard(props) {
         if (!open) {
             let playlist = await store.getCurrentList(id)
             setPlaylist(playlist)
+        } else {
+            store.clear(playlist)
         }
         setOpen(!open)
     }

@@ -73,6 +73,8 @@ export default function AppBanner() {
         </Menu>
 
 
+    let menu = auth.loggedIn ? loggedInMenu : loggedOutMenu;
+
     function getAccountMenu(loggedIn) {
         let userInitials = auth.getUserInitials();
         console.log("userInitials: " + userInitials);
@@ -84,7 +86,7 @@ export default function AppBanner() {
 
     function getLogo(loggedIn) {
         if (loggedIn) {
-            return <Typography sx={{fontSize: 24}}>Playlister</Typography>
+            return <Typography sx={{ fontSize: 24 }}>Playlister</Typography>
         }
         return <Link style={{ textDecoration: 'none', color: 'white' }} to='/'>⌂</Link>
     }
@@ -117,6 +119,7 @@ export default function AppBanner() {
                     </Box>
                 </Toolbar>
             </AppBar>
+            {menu}
         </Box>
     );
 }

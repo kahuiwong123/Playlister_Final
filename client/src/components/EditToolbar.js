@@ -13,32 +13,27 @@ import CloseIcon from '@mui/icons-material/HighlightOff';
     
     @author McKilla Gorilla
 */
-function EditToolbar() {
+function EditToolbar(props) {
     const { store } = useContext(GlobalStoreContext);
 
-    function handleAddNewSong() {
-        store.addNewSong();
-    }
     function handleUndo() {
-        store.undo();
+        store.undo(props.playlist);
     }
     function handleRedo() {
-        store.redo();
+        store.redo(props.playlist);
     }
-    function handleClose() {
-        store.closeCurrentList();
-    }
+    
     return (
         <Box>
             <Button 
-                disabled={!store.canUndo()}
+                disabled={!store.canUndo(props.playlist)}
                 id='undo-button'
                 onClick={handleUndo}
                 variant="contained">
                     <UndoIcon />
             </Button>
             <Button 
-                disabled={!store.canRedo()}
+                disabled={!store.canRedo(props.playlist)}
                 id='redo-button'
                 onClick={handleRedo}
                 variant="contained">

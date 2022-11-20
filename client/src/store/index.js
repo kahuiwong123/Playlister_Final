@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import jsTPS from '../common/jsTPS'
 import api from './store-request-api'
@@ -34,7 +34,7 @@ export const GlobalStoreActionType = {
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
-const tps = new jsTPS();
+// const tps = new jsTPS();
 
 const CurrentModal = {
     NONE: "NONE",
@@ -47,6 +47,7 @@ const CurrentModal = {
 // AVAILABLE TO THE REST OF THE APPLICATION
 function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
+
     const [store, setStore] = useState({
         currentModal: CurrentModal.NONE,
         idNamePairs: [],
@@ -56,7 +57,8 @@ function GlobalStoreContextProvider(props) {
         newListCounter: 0,
         listNameActive: false,
         listIdMarkedForDeletion: null,
-        listMarkedForDeletion: null
+        listMarkedForDeletion: null,
+        transactionList: {}
     });
     const history = useHistory();
 
@@ -82,7 +84,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -96,7 +99,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 })
             }
             // CREATE A NEW LIST
@@ -110,11 +114,16 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
             case GlobalStoreActionType.LOAD_ID_NAME_PAIRS: {
+                let obj = store.transactionList
+                payload.forEach(({ _id }) => {
+                    obj[_id] = new jsTPS()
+                })
                 return setStore({
                     currentModal: CurrentModal.NONE,
                     idNamePairs: payload,
@@ -124,7 +133,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: obj
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -138,7 +148,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: payload.id,
-                    listMarkedForDeletion: payload.playlist
+                    listMarkedForDeletion: payload.playlist,
+                    transactionList: store.transactionList
                 });
             }
             // UPDATE A LIST
@@ -152,7 +163,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 });
             }
             // START EDITING A LIST NAME
@@ -166,7 +178,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: true,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 });
             }
             // 
@@ -180,7 +193,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 });
             }
             case GlobalStoreActionType.REMOVE_SONG: {
@@ -193,7 +207,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 });
             }
             case GlobalStoreActionType.HIDE_MODALS: {
@@ -206,7 +221,8 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList
                 });
             }
             default:
@@ -251,23 +267,13 @@ function GlobalStoreContextProvider(props) {
         asyncChangeListName(id);
     }
 
-    // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
-    store.closeCurrentList = function () {
-        storeReducer({
-            type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
-            payload: {}
-        });
-        tps.clearAllTransactions();
-        // history.push("/")
-    }
-
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
         let newListName = "Untitled" + store.newListCounter;
         const response = await api.createPlaylist(newListName, [], auth.user.email);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
-            tps.clearAllTransactions();
+            // tps.clearAllTransactions();
             let newList = response.data.playlist;
             storeReducer({
                 type: GlobalStoreActionType.CREATE_NEW_LIST,
@@ -326,7 +332,6 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 store.loadIdNamePairs();
                 // history.push("/");
-
             }
         }
         processDelete(id);
@@ -393,7 +398,7 @@ function GlobalStoreContextProvider(props) {
     store.getPlaylistSize = function () {
         return store.currentList.songs.length;
     }
-   
+
     // THIS FUNCTION CREATES A NEW SONG IN THE CURRENT LIST
     // USING THE PROVIDED DATA AND PUTS THIS SONG AT INDEX
     store.createSong = function (playlist, index, song) {
@@ -454,11 +459,11 @@ function GlobalStoreContextProvider(props) {
             youTubeId: youTubeId
         };
         let transaction = new CreateSong_Transaction(store, playlist, index, song);
-        tps.addTransaction(transaction);
+        store.transactionList[playlist._id].addTransaction(transaction);
     }
     store.addMoveSongTransaction = function (playlist, start, end) {
         let transaction = new MoveSong_Transaction(store, playlist, start, end);
-        tps.addTransaction(transaction);
+        store.transactionList[playlist._id].addTransaction(transaction);
     }
     // THIS FUNCTION ADDS A RemoveSong_Transaction TO THE TRANSACTION STACK
     store.addRemoveSongTransaction = () => {
@@ -466,7 +471,7 @@ function GlobalStoreContextProvider(props) {
         let index = store.currentSongIndex;
         let song = store.currentList.songs[index];
         let transaction = new RemoveSong_Transaction(store, playlist, index, song);
-        tps.addTransaction(transaction);
+        store.transactionList[playlist._id].addTransaction(transaction);
     }
     store.addUpdateSongTransaction = function (index, newSongData) {
         let playlist = store.currentList
@@ -477,7 +482,7 @@ function GlobalStoreContextProvider(props) {
             youTubeId: song.youTubeId
         };
         let transaction = new UpdateSong_Transaction(this, playlist, index, oldSongData, newSongData);
-        tps.addTransaction(transaction);
+        store.transactionList[playlist._id].addTransaction(transaction);
     }
     store.updateCurrentList = function (list) {
         async function asyncUpdateCurrentList() {
@@ -492,23 +497,24 @@ function GlobalStoreContextProvider(props) {
         asyncUpdateCurrentList();
     }
 
-    store.undo = function () {
-        tps.undoTransaction();
+    store.clear = function (playlist) {
+        store.transactionList[playlist._id].clearAllTransactions()
     }
-    store.redo = function () {
-        tps.doTransaction();
+
+    store.undo = function (playlist) {
+        store.transactionList[playlist._id].undoTransaction();
+    }
+    store.redo = function (playlist) {
+        store.transactionList[playlist._id].doTransaction();
     }
     store.canAddNewSong = function () {
         return (store.currentList !== null);
     }
-    store.canUndo = function () {
-        return ((store.currentList !== null) && tps.hasTransactionToUndo());
+    store.canUndo = function (playlist) {
+        return store.transactionList[playlist._id].hasTransactionToUndo();
     }
-    store.canRedo = function () {
-        return ((store.currentList !== null) && tps.hasTransactionToRedo());
-    }
-    store.canClose = function () {
-        return (store.currentList !== null);
+    store.canRedo = function (playlist) {
+        return store.transactionList[playlist._id].hasTransactionToRedo();
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
