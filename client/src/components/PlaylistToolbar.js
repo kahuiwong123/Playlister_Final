@@ -30,7 +30,7 @@ const PlaylistToolbar = () => {
                     <PersonIcon fontSize='large' />
                 </IconButton>
             </Box>
-            <TextField variant='filled' sx={{ width: "45%", m: 0 }} label="Search" size='large' InputProps={{
+            <TextField variant='filled' sx={{ width: "45%"}} label="Search" size='large' InputProps={{
                 startAdornment: (
                     <InputAdornment position="start">
                         <SearchIcon />

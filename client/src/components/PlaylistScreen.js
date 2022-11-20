@@ -16,10 +16,10 @@ const PlaylistScreen = () => {
     function handleCreateNewList() {
         store.createNewList();
     }
-    
+
     return (
-        <Box sx={{display: "flex", flexDirection: "column", bgcolor: "#e0e0e0"}}>
-            <Box sx={{ width: "55%", height: "450px", overflow: "scroll", px: 2, py: 1, border: "#bdbdbd"}}>
+        <Box sx={{ width: "55%", border: 1 }}>
+            <Box sx={{ height: "450px", overflow: "scroll", px: 2, py: 1, border: "#bdbdbd" }}>
                 <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                     {store && store.idNamePairs.map((pair) => (
                         <ListCard
@@ -31,7 +31,7 @@ const PlaylistScreen = () => {
                     }
                 </List>
             </Box>
-            <Button variant="text" onClick={handleCreateNewList} startIcon={<AddIcon fontSize="medium" />} sx={{ "&:hover": { color: "#4dabf5" }, fontSize: 18, bgcolor: "#e0e0e0", ml:2, width: "55%" }}>Your Lists</Button>
+            <Button variant="text" onClick={handleCreateNewList} startIcon={<AddIcon fontSize="medium" />} sx={{ "&:hover": { color: "#4dabf5" }, fontSize: 18, bgcolor: "#e0e0e0", width: "100%", textAlign: "center" }}>Your Lists</Button>
             <MUIDeleteModal />
         </Box>
     )

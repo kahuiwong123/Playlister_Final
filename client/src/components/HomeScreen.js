@@ -3,6 +3,7 @@ import { GlobalStoreContext } from '../store'
 import PlaylistToolbar from './PlaylistToolbar';
 import PlaylistScreen from './PlaylistScreen';
 import { Box } from "@mui/material"
+import YoutubeScreen from './YoutubeScreen';
 /*
     This React component lists all the top5 lists in the UI.
     
@@ -10,9 +11,12 @@ import { Box } from "@mui/material"
 */
 const HomeScreen = () => {
     return (
-        <Box sx={{display: "flex", flexDirection: "column"}}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
             <PlaylistToolbar />
-            <PlaylistScreen />
+            <Box sx={{ display: "flex", flexDirection: "row", bgcolor: "#e0e0e0" }}>
+                <PlaylistScreen />
+                <YoutubeScreen />
+            </Box>
         </Box>
     )
 }

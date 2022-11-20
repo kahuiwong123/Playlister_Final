@@ -22,23 +22,27 @@ function EditToolbar(props) {
     function handleRedo() {
         store.redo(props.playlist);
     }
-    
+
     return (
-        <Box>
-            <Button 
-                disabled={!store.canUndo(props.playlist)}
-                id='undo-button'
-                onClick={handleUndo}
-                variant="contained">
+        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", px: 2, py: 2 }}>
+            <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                    disabled={!store.canUndo(props.playlist)}
+                    onClick={handleUndo}
+                    variant="contained">
                     <UndoIcon />
-            </Button>
-            <Button 
-                disabled={!store.canRedo(props.playlist)}
-                id='redo-button'
-                onClick={handleRedo}
-                variant="contained">
+                </Button>
+                <Button
+                    disabled={!store.canRedo(props.playlist)}
+                    onClick={handleRedo}
+                    variant="contained">
                     <RedoIcon />
-            </Button>
+                </Button>
+            </Box>
+            <Box sx={{ display: "flex", gap: 1 }}>
+                <Button variant="contained" size="medium">Publish</Button>
+                <Button variant="contained" size="medium">Duplicate</Button>
+            </Box>
         </Box>
     )
 }
