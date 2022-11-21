@@ -13,6 +13,9 @@ import SongScreen from './SongScreen';
 import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import Link from "@mui/material/Link"
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import { Button } from '@mui/material';
 /*
     This is a card in our list of top 5 lists. It lets select
     a list for editing and it has controls for changing its 
@@ -34,7 +37,7 @@ function ListCard(props) {
             setPlaylist(playlist)
         }
         getPlaylist()
-    }, [])
+    }, [idNamePair])
 
     async function handleClick() {
         store.setListPlaying(playlist)
@@ -102,6 +105,16 @@ function ListCard(props) {
                     <Typography sx={{ fontSize: 14 }}><span style={{ marginRight: "10px" }}>By: </span> {playlist && <Link underline="hover" color="inherit">{playlist.publishInfo.publisher}</Link>}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <Box sx={{ p: 1, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }} >
+                        <IconButton>
+                            <ThumbUpIcon/> 
+                            <Typography sx={{pl: 2}}>{playlist && playlist.likes}</Typography>
+                        </IconButton>
+                        <IconButton>
+                            <ThumbDownIcon/>
+                            <Typography sx={{pl: 2}}>{playlist && playlist.dislikes}</Typography>
+                        </IconButton>
+                    </Box>
                     <Box sx={{ p: 1 }}>
                         <IconButton onClick={handleToggleEdit} aria-label='edit'>
                             <EditIcon style={{ fontSize: '24pt' }} />

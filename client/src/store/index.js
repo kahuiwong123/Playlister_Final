@@ -32,7 +32,8 @@ export const GlobalStoreActionType = {
     EDIT_SONG: "EDIT_SONG",
     REMOVE_SONG: "REMOVE_SONG",
     HIDE_MODALS: "HIDE_MODALS",
-    SET_LIST_PLAYING: "SET_LIST_PLAYING"
+    SET_LIST_PLAYING: "SET_LIST_PLAYING",
+    PUBLISH: "PUBLISH"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -42,7 +43,8 @@ const CurrentModal = {
     NONE: "NONE",
     DELETE_LIST: "DELETE_LIST",
     EDIT_SONG: "EDIT_SONG",
-    REMOVE_SONG: "REMOVE_SONG"
+    REMOVE_SONG: "REMOVE_SONG",
+    PUBLISH_LIST: "PUBLISH_LIST"
 }
 
 // WITH THIS WE'RE MAKING OUR GLOBAL DATA STORE
@@ -255,6 +257,21 @@ function GlobalStoreContextProvider(props) {
                     listCurrentlyPlaying: store.listCurrentlyPlaying
                 });
             }
+            case GlobalStoreActionType.PUBLISH: {
+                return setStore({
+                    currentModal: CurrentModal.PUBLISH_LIST,
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    currentSongIndex: -1,
+                    currentSong: null,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    listIdMarkedForDeletion: null,
+                    listMarkedForDeletion: null,
+                    transactionList: store.transactionList,
+                    listCurrentlyPlaying: store.listCurrentlyPlaying
+                });
+            }
             default:
                 return store;
         }
@@ -303,6 +320,13 @@ function GlobalStoreContextProvider(props) {
             payload: {}
         });
         history.push("/");
+    }
+
+    store.publishPlaylist = function () {
+        const date = new Date().toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })
+        const list = { ...store.currentList, publishInfo: { isPublished: true, publishDate: date, publisher: auth.user.username } }
+        store.updateCurrentList(list)
+        store.loadIdNamePairs()
     }
 
     // THIS FUNCTION CREATES A NEW LIST
@@ -414,18 +438,27 @@ function GlobalStoreContextProvider(props) {
         return store.currentModal === CurrentModal.REMOVE_SONG;
     }
 
+    store.isPublishListModalOpen = () => {
+        return store.currentModal === CurrentModal.PUBLISH_LIST
+    }
+
 
     // THE FOLLOWING 8 FUNCTIONS ARE FOR COORDINATING THE UPDATING
     // OF A LIST, WHICH INCLUDES DEALING WITH THE TRANSACTION STACK. THE
     // FUNCTIONS ARE setCurrentList, addMoveItemTransaction, addUpdateItemTransaction,
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = (playlist) => {
-        // console.log(playlist)
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_LIST,
             payload: playlist
         });
-        console.log(store.currentList)
+    }
+
+    store.openPublishModal = (playlist) => {
+        storeReducer({
+            type: GlobalStoreActionType.PUBLISH,
+            payload: playlist
+        })
     }
 
     store.setListPlaying = (playlist) => {

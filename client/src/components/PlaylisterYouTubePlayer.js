@@ -7,6 +7,7 @@ import FastRewindIcon from '@mui/icons-material/FastRewind';
 import StopIcon from '@mui/icons-material/Stop';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FastForwardIcon from '@mui/icons-material/FastForward';
+import MusicOffIcon from '@mui/icons-material/MusicOff';
 export default function YouTubePlayerExample(props) {
     // THIS EXAMPLE DEMONSTRATES HOW TO DYNAMICALLY MAKE A
     // YOUTUBE PLAYER AND EMBED IT IN YOUR SITE. IT ALSO
@@ -18,6 +19,8 @@ export default function YouTubePlayerExample(props) {
     const [currentSong, setCurrentSong] = useState(0)
     const [youtubeEvent, setYoutubeEvent] = useState({})
     // THIS HAS THE YOUTUBE IDS FOR THE SONGS IN OUR PLAYLIST
+
+    let flag = store.listCurrentlyPlaying !== null && store.listCurrentlyPlaying[currentSong] !== null && store.listCurrentlyPlaying.songs.length !== 0
 
 
     // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
@@ -107,25 +110,33 @@ export default function YouTubePlayerExample(props) {
         youtubeEvent.target.playVideo()
     }
 
-    let textStyle = { pl: 3, fontSize: 16 }
-    let flag = store.listCurrentlyPlaying && store.listCurrentlyPlaying[currentSong]
+    function musicVideo() {
+        if (flag) {
+            return <YouTube
+            videoId={playlist[currentSong]}
+            opts={playerOptions}
+            onReady={onPlayerReady}
+            onStateChange={onPlayerStateChange} />
+        }
+        return <Box sx={{height: "275px", width: "100%"}}>
+            <MusicOffIcon sx={{height: "100%", width: "100%"}} />
+        </Box>
+    }
+
+    let textStyle = { pl: 3, fontSize: 16 }    
     return (
         <Box style={{ display: props.index === 1 ? 'none' : 'block' }}>
-            <YouTube
-                videoId={playlist[currentSong]}
-                opts={playerOptions}
-                onReady={onPlayerReady}
-                onStateChange={onPlayerStateChange} />
+            {musicVideo()}
             <Box sx={{ height: 120 }}>
                 <Typography sx={{ textAlign: "center" }}>Now Playing</Typography>
                 <Typography sx={textStyle}>Playlist: {flag && store.listCurrentlyPlaying.name}</Typography>
-                <Typography sx={textStyle}>Song #: {currentSong + 1}</Typography>
+                <Typography sx={textStyle}>Song #: {flag && currentSong + 1}</Typography>
                 <Typography sx={textStyle}>Title: {flag && store.listCurrentlyPlaying.songs[currentSong].title}</Typography>
                 <Typography sx={textStyle}>Artist: {flag && store.listCurrentlyPlaying.songs[currentSong].artist}</Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <Toolbar sx={{ bgcolor: "#bdbdbd", borderRadius: 8, mb: 2 }}>
-                    <IconButton onClick={handleRewind} disabled={currentSong == 0}>
+                    <IconButton onClick={handleRewind} disabled={currentSong === 0}>
                         <FastRewindIcon fontSize='large' />
                     </IconButton>
                     <IconButton onClick={handlePause} disabled={youtubeEvent.data === 2}>

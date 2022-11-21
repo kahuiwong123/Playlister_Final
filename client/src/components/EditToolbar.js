@@ -23,6 +23,10 @@ function EditToolbar(props) {
         store.redo(props.playlist);
     }
 
+    function handlePublish() {
+        store.openPublishModal(props.playlist)
+    }
+
     return (
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", px: 2, py: 2 }}>
             <Box sx={{ display: "flex", gap: 1 }}>
@@ -40,7 +44,7 @@ function EditToolbar(props) {
                 </Button>
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="contained" size="medium">Publish</Button>
+                <Button variant="contained" size="medium" onClick={handlePublish}>Publish</Button>
                 <Button variant="contained" size="medium">Duplicate</Button>
             </Box>
         </Box>

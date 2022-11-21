@@ -4,6 +4,7 @@ import SongCard from './SongCard.js'
 import EditToolbar from './EditToolbar.js'
 import MUIEditSongModal from './MUIEditSongModal'
 import MUIRemoveSongModal from './MUIRemoveSongModal'
+import PublishPlaylistModal from './PublishPlaylistModal.js'
 import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import List from '@mui/material/List';
@@ -22,11 +23,11 @@ function SongScreen(props) {
 
     document.onkeydown = (e) => {
         if (e.key === "z" && e.ctrlKey) {
-            store.undo()
+            store.undo(props.playlist)
         }
 
         else if (e.key === "y" && e.ctrlKey) {
-            store.redo()
+            store.redo(props.playlist)
         }
     }
 
@@ -37,11 +38,9 @@ function SongScreen(props) {
     else if (store.isRemoveSongModalOpen()) {
         modalJSX = <MUIRemoveSongModal />;
     }
-
-
-    // if (store.currentList == null) {
-    //     return <UnauthorizedModal />
-    // }
+    else if (store.isPublishListModalOpen()) {
+        modalJSX = <PublishPlaylistModal />;
+    }
 
     function handleAddNewSong() {
         store.addNewSong(props.playlist);

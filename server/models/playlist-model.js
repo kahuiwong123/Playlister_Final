@@ -23,7 +23,7 @@ const playlistSchema = new Schema(
         publishInfo: {
             type: {
                 isPublished: Boolean,
-                publishDate: Date,
+                publishDate: String,
                 publisher: String
             }, required: true
         },
