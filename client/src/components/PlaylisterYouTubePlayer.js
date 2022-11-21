@@ -1,28 +1,43 @@
 import React from 'react';
 import YouTube from 'react-youtube';
-
+import GlobalStoreContext from '../store';
+import { useContext, useState, useEffect } from 'react';
+import { Box, Typography, IconButton, Toolbar } from "@mui/material"
+import FastRewindIcon from '@mui/icons-material/FastRewind';
+import StopIcon from '@mui/icons-material/Stop';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import FastForwardIcon from '@mui/icons-material/FastForward';
 export default function YouTubePlayerExample(props) {
     // THIS EXAMPLE DEMONSTRATES HOW TO DYNAMICALLY MAKE A
     // YOUTUBE PLAYER AND EMBED IT IN YOUR SITE. IT ALSO
     // DEMONSTRATES HOW TO IMPLEMENT A PLAYLIST THAT MOVES
     // FROM ONE SONG TO THE NEXT
 
+    const { store } = useContext(GlobalStoreContext);
+    const [playlist, setPlaylist] = useState([])
+    const [currentSong, setCurrentSong] = useState(0)
+    const [youtubeEvent, setYoutubeEvent] = useState({})
     // THIS HAS THE YOUTUBE IDS FOR THE SONGS IN OUR PLAYLIST
-    let playlist = [
-        "mqmxkGjow1A",
-        "8RbXIMZmVv8",
-        "8UbNbor3OqQ"
-    ];
+
 
     // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
-    let currentSong = 0;
+    useEffect(() => {
+        if (store.listCurrentlyPlaying) {
+            setCurrentSong(0)
+            let list = store.listCurrentlyPlaying.songs.map(song => song.youTubeId)
+            setPlaylist(list)
+            console.log(list)
+        } else {
+            setPlaylist([])
+        }
+    }, [store.listCurrentlyPlaying])
 
     const playerOptions = {
-        height: '300px',
+        height: '275px',
         width: '100%',
         playerVars: {
             // https://developers.google.com/youtube/player_parameters
-            autoplay: 0,
+            autoplay: 1,
         },
     };
 
@@ -36,11 +51,11 @@ export default function YouTubePlayerExample(props) {
 
     // THIS FUNCTION INCREMENTS THE PLAYLIST SONG TO THE NEXT ONE
     function incSong() {
-        currentSong++;
-        currentSong = currentSong % playlist.length;
+        setCurrentSong(prev => (prev + 1) % playlist.length)
     }
 
     function onPlayerReady(event) {
+        setYoutubeEvent(event)
         loadAndPlayCurrentSong(event.target);
         event.target.playVideo();
     }
@@ -52,6 +67,7 @@ export default function YouTubePlayerExample(props) {
     function onPlayerStateChange(event) {
         let playerStatus = event.data;
         let player = event.target;
+        setYoutubeEvent(event)
         if (playerStatus === -1) {
             // VIDEO UNSTARTED
             console.log("-1 Video unstarted");
@@ -75,9 +91,53 @@ export default function YouTubePlayerExample(props) {
         }
     }
 
-    return <YouTube style={{display: props.index === 1 ? 'none' : 'block'}}
-        videoId={playlist[currentSong]}
-        opts={playerOptions}
-        onReady={onPlayerReady}
-        onStateChange={onPlayerStateChange} />;
+    function handleForward() {
+        incSong()
+    }
+
+    function handleRewind() {
+        setCurrentSong(prev => (prev - 1) % playlist.length)
+    }
+
+    function handlePause() {
+        youtubeEvent.target.pauseVideo()
+    }
+
+    function handlePlay() {
+        youtubeEvent.target.playVideo()
+    }
+
+    let textStyle = { pl: 3, fontSize: 16 }
+    let flag = store.listCurrentlyPlaying && store.listCurrentlyPlaying[currentSong]
+    return (
+        <Box style={{ display: props.index === 1 ? 'none' : 'block' }}>
+            <YouTube
+                videoId={playlist[currentSong]}
+                opts={playerOptions}
+                onReady={onPlayerReady}
+                onStateChange={onPlayerStateChange} />
+            <Box sx={{ height: 120 }}>
+                <Typography sx={{ textAlign: "center" }}>Now Playing</Typography>
+                <Typography sx={textStyle}>Playlist: {flag && store.listCurrentlyPlaying.name}</Typography>
+                <Typography sx={textStyle}>Song #: {currentSong + 1}</Typography>
+                <Typography sx={textStyle}>Title: {flag && store.listCurrentlyPlaying.songs[currentSong].title}</Typography>
+                <Typography sx={textStyle}>Artist: {flag && store.listCurrentlyPlaying.songs[currentSong].artist}</Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Toolbar sx={{ bgcolor: "#bdbdbd", borderRadius: 8, mb: 2 }}>
+                    <IconButton onClick={handleRewind} disabled={currentSong == 0}>
+                        <FastRewindIcon fontSize='large' />
+                    </IconButton>
+                    <IconButton onClick={handlePause} disabled={youtubeEvent.data === 2}>
+                        <StopIcon fontSize='large' />
+                    </IconButton>
+                    <IconButton onClick={handlePlay} disabled={youtubeEvent.data === 1}>
+                        <PlayArrowIcon fontSize='large' />
+                    </IconButton>
+                    <IconButton onClick={handleForward}>
+                        <FastForwardIcon fontSize='large' />
+                    </IconButton>
+                </Toolbar>
+            </Box>
+        </Box>)
 }

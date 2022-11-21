@@ -21,6 +21,7 @@ getLoggedIn = async (req, res) => {
             user: {
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
+                username: loggedInUser.username,
                 email: loggedInUser.email
             }
         })
@@ -97,7 +98,7 @@ logoutUser = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, username, email, password, passwordVerify, } = req.body;
+        const { firstName, lastName, username, email, password, passwordVerify } = req.body;
         console.log("create user: " + firstName + " " + lastName + " " + username + " " + email + " " + password + " " + passwordVerify);
         if (!firstName || !lastName || !username || !email || !password || !passwordVerify) {
             return res
