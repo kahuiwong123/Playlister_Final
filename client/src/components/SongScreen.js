@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import List from '@mui/material/List';
 import { GlobalStoreContext } from '../store/index.js'
 import { Button } from '@mui/material'
+import { darken } from '@mui/material'
 
 /*
     This React component lets us edit a loaded list, which only
@@ -30,6 +31,8 @@ function SongScreen(props) {
             store.redo(props.playlist)
         }
     }
+
+    let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#2979ff"
 
     let modalJSX = "";
     if (store.isEditSongModalOpen()) {
@@ -61,7 +64,7 @@ function SongScreen(props) {
                     ))
                 }
                 <Box sx={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-                <Button variant='contained'  onClick={handleAddNewSong} startIcon={<AddIcon/>} sx={{width: "100%", borderRadius: 3, my: 1, mx: 2, p: 2, fontSize: 18 }}></Button>
+                <Button variant='contained' onClick={handleAddNewSong} startIcon={<AddIcon/>} sx={{width: "100%", borderRadius: 3, my: 1, mx: 2, p: 2, fontSize: 18, bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) } }}></Button>
                 </Box>
             </List>
             <EditToolbar playlist={props.playlist}/>

@@ -16,6 +16,7 @@ import Link from "@mui/material/Link"
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { Button } from '@mui/material';
+import { darken } from '@mui/material';
 /*
     This is a card in our list of top 5 lists. It lets select
     a list for editing and it has controls for changing its 
@@ -83,6 +84,9 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
+    let background = (playlist && playlist.publishInfo.isPublished) ? "#ffc400" : "#2196f3"
+    let border = (playlist && playlist.publishInfo.isPublished) ? 2 : 0
+
     let selectClass = "unselected-list-card";
     if (selected) {
         selectClass = "selected-list-card";
@@ -96,23 +100,25 @@ function ListCard(props) {
             <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{ "&:hover": { backgroundColor: "#4dabf5" }, bgcolor: "#2196f3", height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+                sx={{ "&:hover": { backgroundColor: darken(background, 0.1) }, bgcolor: background, height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", border: border }}
                 button
                 onClick={handleClick}
             >
                 <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
                     <Typography sx={{ fontSize: 24 }}>{idNamePair.name}</Typography>
                     <Typography sx={{ fontSize: 14 }}><span style={{ marginRight: "10px" }}>By: </span> {playlist && <Link underline="hover" color="inherit">{playlist.publishInfo.publisher}</Link>}</Typography>
+                    <Typography sx={{ fontSize: 14, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }}>Published: {playlist && playlist.publishInfo.publishDate}</Typography>
+                    <Typography sx={{ fontSize: 14, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }}>Listens: {playlist && playlist.listens}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Box sx={{ p: 1, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }} >
                         <IconButton>
-                            <ThumbUpIcon/> 
-                            <Typography sx={{pl: 2}}>{playlist && playlist.likes}</Typography>
+                            <ThumbUpIcon />
+                            <Typography sx={{ pl: 2 }}>{playlist && playlist.likes}</Typography>
                         </IconButton>
                         <IconButton>
-                            <ThumbDownIcon/>
-                            <Typography sx={{pl: 2}}>{playlist && playlist.dislikes}</Typography>
+                            <ThumbDownIcon />
+                            <Typography sx={{ pl: 2 }}>{playlist && playlist.dislikes}</Typography>
                         </IconButton>
                     </Box>
                     <Box sx={{ p: 1 }}>
@@ -132,7 +138,7 @@ function ListCard(props) {
                     </IconButton>
                 </Box>
             </ListItem>
-            <Collapse in={open} timeout="auto" unmountOnExit sx={{ bgcolor: "#2196f3" }}>
+            <Collapse in={open} timeout="auto" unmountOnExit sx={{ bgcolor: background, border: border, borderTop: 0 }}>
                 <SongScreen playlist={playlist} />
             </Collapse>
         </Box>
