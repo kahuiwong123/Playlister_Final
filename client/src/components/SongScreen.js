@@ -33,6 +33,7 @@ function SongScreen(props) {
     }
 
     let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#2979ff"
+    let display = props.playlist && props.playlist.publishInfo.isPublished ? 'none' : 'block'
 
     let modalJSX = "";
     if (store.isEditSongModalOpen()) {
@@ -64,7 +65,7 @@ function SongScreen(props) {
                     ))
                 }
                 <Box sx={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-                <Button variant='contained' onClick={handleAddNewSong} startIcon={<AddIcon/>} sx={{width: "100%", borderRadius: 3, my: 1, mx: 2, p: 2, fontSize: 18, bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) } }}></Button>
+                <Button variant='contained' onClick={handleAddNewSong} startIcon={<AddIcon/>} sx={{width: "100%", borderRadius: 3, my: 1, mx: 2, p: 2, fontSize: 18, display: display}}></Button>
                 </Box>
             </List>
             <EditToolbar playlist={props.playlist}/>

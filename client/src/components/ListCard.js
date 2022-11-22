@@ -86,15 +86,8 @@ function ListCard(props) {
 
     let background = (playlist && playlist.publishInfo.isPublished) ? "#ffc400" : "#2196f3"
     let border = (playlist && playlist.publishInfo.isPublished) ? 2 : 0
+    let display = playlist && !playlist.publishInfo.isPublished ? 'none' : 'block'
 
-    let selectClass = "unselected-list-card";
-    if (selected) {
-        selectClass = "selected-list-card";
-    }
-    let cardStatus = false;
-    if (store.isListNameEditActive) {
-        cardStatus = true;
-    }
     let cardElement =
         <Box>
             <ListItem
@@ -107,8 +100,8 @@ function ListCard(props) {
                 <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
                     <Typography sx={{ fontSize: 24 }}>{idNamePair.name}</Typography>
                     <Typography sx={{ fontSize: 14 }}><span style={{ marginRight: "10px" }}>By: </span> {playlist && <Link underline="hover" color="inherit">{playlist.publishInfo.publisher}</Link>}</Typography>
-                    <Typography sx={{ fontSize: 14, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }}>Published: {playlist && playlist.publishInfo.publishDate}</Typography>
-                    <Typography sx={{ fontSize: 14, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }}>Listens: {playlist && playlist.listens}</Typography>
+                    <Typography sx={{ fontSize: 14, display: display }}>Published: {playlist && playlist.publishInfo.publishDate}</Typography>
+                    <Typography sx={{ fontSize: 14, display: display }}>Listens: {playlist && playlist.listens}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Box sx={{ p: 1, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }} >
@@ -121,12 +114,12 @@ function ListCard(props) {
                             <Typography sx={{ pl: 2 }}>{playlist && playlist.dislikes}</Typography>
                         </IconButton>
                     </Box>
-                    <Box sx={{ p: 1 }}>
+                    <Box sx={{ p: 1, display: playlist && playlist.publishInfo.isPublished ? 'none' : 'block' }}>
                         <IconButton onClick={handleToggleEdit} aria-label='edit'>
                             <EditIcon style={{ fontSize: '24pt' }} />
                         </IconButton>
                     </Box>
-                    <Box sx={{ p: 1 }}>
+                    <Box sx={{ p: 1, display: playlist && playlist.publishInfo.isPublished ? 'none' : 'block' }}>
                         <IconButton onClick={(event) => {
                             handleDeleteList(event, idNamePair._id)
                         }} aria-label='delete'>

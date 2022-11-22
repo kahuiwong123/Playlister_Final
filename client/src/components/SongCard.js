@@ -46,8 +46,11 @@ function SongCard(props) {
         }
     }
 
+    let display = playlist && playlist.publishInfo.isPublished ? 'none' : 'block'
+    let padding = playlist && playlist.publishInfo.isPublished ? 3 : 1 
+
     return (
-        <Box sx={{ display: "flex", alignItems: "center", bgcolor: "white", justifyContent: "space-between", flexDirection: "row", fontSize: 18, p: 1, borderRadius: 3, my: 1, mx: 2 }}
+        <Box sx={{ display: "flex", alignItems: "center", bgcolor: "white", justifyContent: "space-between", flexDirection: "row", fontSize: 18, p: padding, borderRadius: 3, my: 1, mx: 2 }}
             key={index}
             id={'song-' + index + '-card'}
             onDragStart={handleDragStart}
@@ -66,7 +69,7 @@ function SongCard(props) {
                     {song.title} by {song.artist}
                 </a>
             </span>
-            <IconButton onClick={handleRemoveSong}>
+            <IconButton onClick={handleRemoveSong} sx={{display: display}}>
                 <ClearIcon fontSize="large" />
             </IconButton>
         </Box>

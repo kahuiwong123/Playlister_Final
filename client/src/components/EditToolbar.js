@@ -29,6 +29,7 @@ function EditToolbar(props) {
     }
 
     let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#2979ff"
+    let display = props.playlist && props.playlist.publishInfo.isPublished ? 'hidden' : 'visible'
 
     return (
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", px: 2, py: 2 }}>
@@ -37,19 +38,19 @@ function EditToolbar(props) {
                     disabled={!store.canUndo(props.playlist)}
                     onClick={handleUndo}
                     variant="contained"
-                    sx={{bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) }}}>
+                    sx={{visibility: display }}>
                     <UndoIcon />
                 </Button>
                 <Button
                     disabled={!store.canRedo(props.playlist)}
                     onClick={handleRedo}
                     variant="contained"
-                    sx={{bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) }}}>
+                    sx={{visibility: display }}>
                     <RedoIcon />
                 </Button>
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="contained" size="medium" onClick={handlePublish} sx={{bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) }}}>Publish</Button>
+                <Button variant="contained" size="medium" onClick={handlePublish} sx={{visibility: display }}>Publish</Button>
                 <Button variant="contained" size="medium" sx={{bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) }}}>Duplicate</Button>
             </Box>
         </Box>
