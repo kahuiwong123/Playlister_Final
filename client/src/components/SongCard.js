@@ -41,7 +41,7 @@ function SongCard(props) {
 
     function handleClick(event) {
         // DOUBLE CLICK IS FOR SONG EDITING
-        if (event.detail === 2) {
+        if (event.detail === 2 && !props.playlist.publishInfo.isPublished) {
             store.showEditSongModal(playlist, index, song);
         }
     }

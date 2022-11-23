@@ -329,12 +329,70 @@ function GlobalStoreContextProvider(props) {
         store.loadIdNamePairs()
     }
 
+    store.likePlaylist = function (playlist) {
+        const dislikeActive = playlist.dislikedUsers.includes(auth.user.username)
+        const likeActive = playlist.likedUsers.includes(auth.user.username)
+        if (dislikeActive) {
+            playlist.dislikedUsers.splice(playlist.dislikedUsers.indexOf(auth.user.username), 1)
+            playlist.dislikes -= 1
+            playlist.likedUsers.push(auth.user.username)
+            playlist.likes += 1
+        }
+
+        else if (likeActive) {
+            playlist.likedUsers.splice(playlist.likedUsers.indexOf(auth.user.username), 1)
+            playlist.likes -= 1
+        } else {
+            playlist.likedUsers.push(auth.user.username)
+            playlist.likes += 1
+        }
+        store.updateCurrentList(playlist)
+        store.loadIdNamePairs()
+    }
+
+    store.listenPlaylist = function (playlist) {
+        if (store.listCurrentlyPlaying === null) {
+            playlist.listens += 1
+        }
+
+        else if (playlist._id !== store.listCurrentlyPlaying._id && playlist.publishInfo.isPublished) {
+            playlist.listens += 1
+        }
+
+        // store.updateCurrentList(playlist)
+        // // store.loadIdNamePairs()
+    }
+
+    store.dislikePlaylist = function (playlist) {
+        const dislikeActive = playlist.dislikedUsers.includes(auth.user.username)
+        const likeActive = playlist.likedUsers.includes(auth.user.username)
+        if (likeActive) {
+            playlist.likedUsers.splice(playlist.likedUsers.indexOf(auth.user.username), 1)
+            playlist.likes -= 1
+            playlist.dislikedUsers.push(auth.user.username)
+            playlist.dislikes += 1
+        }
+
+        else if (dislikeActive) {
+            playlist.dislikedUsers.splice(playlist.dislikedUsers.indexOf(auth.user.username), 1)
+            playlist.dislikes -= 1
+        }
+
+        else {
+            playlist.dislikedUsers.push(auth.user.username)
+            playlist.dislikes += 1
+        }
+
+        store.updateCurrentList(playlist)
+        store.loadIdNamePairs()
+    }
+
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
         let newListName = "Untitled" + store.newListCounter;
         console.log(auth.user.username)
         let publishInfo = { isPublished: false, publishDate: null, publisher: auth.user.username }
-        const response = await api.createPlaylist(newListName, [], auth.user.email, 0, 0, 0, publishInfo, []);
+        const response = await api.createPlaylist(newListName, [], auth.user.email, 0, 0, 0, publishInfo, [], [], []);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
             // tps.clearAllTransactions();

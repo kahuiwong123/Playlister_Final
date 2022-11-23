@@ -1,11 +1,9 @@
 import { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
 import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
 import Box from "@mui/material/Box"
 import RedoIcon from '@mui/icons-material/Redo';
 import UndoIcon from '@mui/icons-material/Undo';
-import CloseIcon from '@mui/icons-material/HighlightOff';
 import { darken } from '@mui/material';
 
 /*
@@ -28,7 +26,7 @@ function EditToolbar(props) {
         store.openPublishModal(props.playlist)
     }
 
-    let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#2979ff"
+    let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#1565c0"
     let display = props.playlist && props.playlist.publishInfo.isPublished ? 'hidden' : 'visible'
 
     return (

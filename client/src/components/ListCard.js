@@ -15,8 +15,11 @@ import { useEffect } from 'react';
 import Link from "@mui/material/Link"
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import { Button } from '@mui/material';
 import { darken } from '@mui/material';
+import AuthContext from '../auth';
 /*
     This is a card in our list of top 5 lists. It lets select
     a list for editing and it has controls for changing its 
@@ -26,6 +29,7 @@ import { darken } from '@mui/material';
 */
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext)
     const [editActive, setEditActive] = useState(false);
     const [playlist, setPlaylist] = useState(null)
     const [text, setText] = useState("");
@@ -41,7 +45,11 @@ function ListCard(props) {
     }, [idNamePair])
 
     async function handleClick() {
-        store.setListPlaying(playlist)
+        store.listenPlaylist(playlist)
+        if (playlist.songs.length > 0) {
+            console.log(playlist)
+            store.setListPlaying(playlist)
+        }
     }
 
     function handleExpand(event) {
@@ -84,6 +92,16 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
+    function handleLike(event) {
+        event.stopPropagation()
+        store.likePlaylist(playlist)
+    }
+
+    function handleDislike(event) {
+        event.stopPropagation()
+        store.dislikePlaylist(playlist)
+    }
+
     let background = (playlist && playlist.publishInfo.isPublished) ? "#ffc400" : "#2196f3"
     let border = (playlist && playlist.publishInfo.isPublished) ? 2 : 0
     let display = playlist && !playlist.publishInfo.isPublished ? 'none' : 'block'
@@ -105,12 +123,12 @@ function ListCard(props) {
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Box sx={{ p: 1, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }} >
-                        <IconButton>
-                            <ThumbUpIcon />
+                        <IconButton onClick={handleLike}>
+                            {playlist && playlist.likedUsers.includes(auth.user.username) ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
                             <Typography sx={{ pl: 2 }}>{playlist && playlist.likes}</Typography>
                         </IconButton>
-                        <IconButton>
-                            <ThumbDownIcon />
+                        <IconButton onClick={handleDislike}>
+                            {playlist && playlist.dislikedUsers.includes(auth.user.username) ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
                             <Typography sx={{ pl: 2 }}>{playlist && playlist.dislikes}</Typography>
                         </IconButton>
                     </Box>
