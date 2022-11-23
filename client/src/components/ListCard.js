@@ -33,8 +33,15 @@ function ListCard(props) {
     const [editActive, setEditActive] = useState(false);
     const [playlist, setPlaylist] = useState(null)
     const [text, setText] = useState("");
-    const { idNamePair, selected } = props;
+    const { idNamePair, selected, list } = props;
     const [open, setOpen] = useState(false);
+
+
+    useEffect(() => {
+        if (list) {
+            setPlaylist(list)
+        }
+    }, [])
 
     useEffect(() => {
         const getPlaylist = async () => {
@@ -54,7 +61,7 @@ function ListCard(props) {
 
     function handleExpand(event) {
         event.stopPropagation()
-        if (open) {
+        if (open && playlist && !playlist.publishInfo.isPublished) {
             store.clear(playlist)
         }
         setOpen(!open)

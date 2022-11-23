@@ -32,20 +32,18 @@ function EditToolbar(props) {
     return (
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", px: 2, py: 2 }}>
             <Box sx={{ display: "flex", gap: 1 }}>
-                <Button
+                {props.playlist && !props.playlist.publishInfo.isPublished && <Button
                     disabled={!store.canUndo(props.playlist)}
                     onClick={handleUndo}
-                    variant="contained"
-                    sx={{visibility: display }}>
+                    variant="contained">
                     <UndoIcon />
-                </Button>
-                <Button
+                </Button>}
+                {props.playlist && !props.playlist.publishInfo.isPublished && <Button
                     disabled={!store.canRedo(props.playlist)}
                     onClick={handleRedo}
-                    variant="contained"
-                    sx={{visibility: display }}>
+                    variant="contained">
                     <RedoIcon />
-                </Button>
+                </Button>}
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
                 <Button variant="contained" size="medium" onClick={handlePublish} sx={{visibility: display }}>Publish</Button>
