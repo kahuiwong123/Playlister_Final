@@ -81,6 +81,22 @@ function GlobalStoreContextProvider(props) {
     const { auth } = useContext(AuthContext);
     console.log("auth: " + auth);
 
+    useEffect(() => {
+        const getTPS = async () => {
+            let response = await api.getPlaylistPairs()
+            if (response.data.success) {
+                let pairs = response.data.idNamePairs
+                let obj = {}
+                pairs.forEach(({ _id }) => {
+                    obj[_id] = new jsTPS()
+                })
+                setStore({ ...store, transactionList: obj })
+            }
+
+        }
+        getTPS()
+    }, [])
+
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
@@ -122,27 +138,29 @@ function GlobalStoreContextProvider(props) {
             }
             // CREATE A NEW LIST
             case GlobalStoreActionType.CREATE_NEW_LIST: {
+                let newTransactionsList = store.transactionList
+                newTransactionsList[payload._id] = new jsTPS()
                 return setStore({
                     currentModal: CurrentModal.NONE,
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: store.currentList,
                     currentSongIndex: -1,
                     currentSong: null,
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
                     listMarkedForDeletion: null,
-                    transactionList: store.transactionList,
+                    transactionList: newTransactionsList,
                     listCurrentlyPlaying: store.listCurrentlyPlaying,
                     screenType: store.screenType
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
             case GlobalStoreActionType.LOAD_ID_NAME_PAIRS: {
-                let obj = store.transactionList
-                payload.forEach(({ _id }) => {
-                    obj[_id] = new jsTPS()
-                })
+                // let obj = store.transactionList
+                // payload.forEach(({ _id }) => {
+                //     obj[_id] = new jsTPS()
+                // })
                 return setStore({
                     currentModal: CurrentModal.NONE,
                     idNamePairs: payload,
@@ -153,7 +171,7 @@ function GlobalStoreContextProvider(props) {
                     listNameActive: false,
                     listIdMarkedForDeletion: null,
                     listMarkedForDeletion: null,
-                    transactionList: obj,
+                    transactionList: store.transactionList,
                     listCurrentlyPlaying: store.listCurrentlyPlaying,
                     screenType: store.screenType
                 });
@@ -351,7 +369,7 @@ function GlobalStoreContextProvider(props) {
         const date = new Date().toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })
         const list = { ...store.currentList, publishInfo: { isPublished: true, publishDate: date, publisher: auth.user.username } }
         store.updateCurrentList(list)
-        
+
     }
 
     store.likePlaylist = function (playlist) {
@@ -372,7 +390,7 @@ function GlobalStoreContextProvider(props) {
             playlist.likes += 1
         }
         store.updateCurrentList(playlist)
-        
+
     }
 
     store.listenPlaylist = function (playlist) {
@@ -412,7 +430,7 @@ function GlobalStoreContextProvider(props) {
         }
 
         store.updateCurrentList(playlist)
-        
+
     }
 
     // THIS FUNCTION CREATES A NEW LIST
@@ -502,7 +520,6 @@ function GlobalStoreContextProvider(props) {
             console.log(response.data)
             if (response.data.success) {
                 store.loadIdNamePairs();
-                // history.push("/");
             }
         }
         processDelete(id);

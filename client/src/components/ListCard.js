@@ -59,9 +59,9 @@ function ListCard(props) {
 
     function handleExpand(event) {
         event.stopPropagation()
-        if (open && playlist && !playlist.publishInfo.isPublished) {
-            store.clear(playlist)
-        }
+        // if (open && playlist && !playlist.publishInfo.isPublished) {
+        //     store.clear(playlist)
+        // }
         setOpen(!open)
     }
 
