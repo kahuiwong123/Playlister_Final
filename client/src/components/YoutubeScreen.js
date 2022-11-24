@@ -1,20 +1,23 @@
 import React from 'react'
-import { Box, Typography, Tabs, Tab } from "@mui/material"
+import { Box, Tabs, Tab, List, TextField, Container, Typography } from "@mui/material"
+import { useState } from 'react'
 import YouTubePlayerExample from './PlaylisterYouTubePlayer'
-
+import { GlobalStoreContext } from '../store'
+import CommentCard from './CommentCard'
+import { useContext } from 'react'
 const YoutubeScreen = () => {
 
   const [value, setValue] = React.useState(0);
-
+  const { store } = useContext(GlobalStoreContext)
+  const [text, setText] = useState("")
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   function TabPanel(props) {
     const { children, value, index, ...other } = props;
-
     return (
-      <Typography
+      <div
         role="tabpanel"
         hidden={value !== index}
         id={`simple-tabpanel-${index}`}
@@ -22,11 +25,13 @@ const YoutubeScreen = () => {
         {...other}
       >
         {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
+          <Container>
+            <Box>
+              {children}
+            </Box>
+          </Container>
         )}
-      </Typography>
+      </div>
     );
   }
 
@@ -37,6 +42,28 @@ const YoutubeScreen = () => {
     };
   }
 
+  function handleTextChange(event) {
+    setText(event.target.value)
+  }
+
+  function handleAddComment(event) {
+    if (event.keyCode == 13 && text !== "") {
+      // console.log('value', event.target.value);
+      store.addCommentToPlaylist(text)
+      setText("")
+    }
+  }
+
+  function commentSection() {
+    if (store.listCurrentlyPlaying && store.listCurrentlyPlaying.comments.length === 0) {
+      return <Typography sx={{fontSize: 18}}>This playlist currently has no comments...</Typography>
+    }
+    return store.listCurrentlyPlaying.comments.map((comment, index) => (<CommentCard key={index} comment={comment} />))
+
+  }
+
+  let display = store.listCurrentlyPlaying && !store.listCurrentlyPlaying.publishInfo.isPublished ? 'hidden' : 'visible'
+
   return (
     <Box sx={{ width: "45%", border: 1 }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -46,8 +73,11 @@ const YoutubeScreen = () => {
         </Tabs>
       </Box>
       <YouTubePlayerExample index={value} />
-      <TabPanel value={value} index={1}>
-        Item Two
+      <TabPanel value={value} index={1} sx={{ height: "90%" }}>
+        <List sx={{ height: "350px", overflow: "scroll", display: "flex", flexDirection: "column", gap: 1, alignItems: "left" }}>
+          {commentSection()}
+        </List>
+        <TextField sx={{ width: "100%", mt: 3, visibility: display }} label="Add Comment" value={text} onChange={handleTextChange} onKeyDown={handleAddComment} autoFocus />
       </TabPanel>
     </Box>
   )

@@ -50,7 +50,6 @@ const PlaylistScreen = () => {
         }
     }
 
-
     return (
         <Box sx={{ width: "55%", border: 1 }}>
             <Box sx={{ height: "450px", overflow: "scroll", px: 2, py: 1, border: "#bdbdbd" }}>

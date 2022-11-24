@@ -194,6 +194,7 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.SET_LIST_PLAYING: {
+                console.log(payload)
                 return setStore({
                     currentModal: CurrentModal.NONE,
                     idNamePairs: store.idNamePairs,
@@ -350,7 +351,7 @@ function GlobalStoreContextProvider(props) {
         const date = new Date().toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })
         const list = { ...store.currentList, publishInfo: { isPublished: true, publishDate: date, publisher: auth.user.username } }
         store.updateCurrentList(list)
-        store.loadIdNamePairs()
+        
     }
 
     store.likePlaylist = function (playlist) {
@@ -371,20 +372,23 @@ function GlobalStoreContextProvider(props) {
             playlist.likes += 1
         }
         store.updateCurrentList(playlist)
-        store.loadIdNamePairs()
+        
     }
 
     store.listenPlaylist = function (playlist) {
-        if (store.listCurrentlyPlaying === null) {
-            playlist.listens += 1
+        const temp = async (playlist) => {
+            if (playlist.publishInfo.isPublished && (store.listCurrentlyPlaying === null || playlist._id !== store.listCurrentlyPlaying._id)) {
+                playlist.listens += 1
+            }
+            let response = await api.updatePlaylistById(playlist._id, playlist)
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_LIST_PLAYING,
+                    payload: playlist
+                })
+            }
         }
-
-        else if (playlist._id !== store.listCurrentlyPlaying._id && playlist.publishInfo.isPublished) {
-            playlist.listens += 1
-        }
-
-        // store.updateCurrentList(playlist)
-        // // store.loadIdNamePairs()
+        temp(playlist)
     }
 
     store.dislikePlaylist = function (playlist) {
@@ -408,7 +412,7 @@ function GlobalStoreContextProvider(props) {
         }
 
         store.updateCurrentList(playlist)
-        store.loadIdNamePairs()
+        
     }
 
     // THIS FUNCTION CREATES A NEW LIST
@@ -692,13 +696,22 @@ function GlobalStoreContextProvider(props) {
         async function asyncUpdateCurrentList() {
             const response = await api.updatePlaylistById(list._id, list);
             if (response.data.success) {
-                storeReducer({
-                    type: GlobalStoreActionType.SET_CURRENT_LIST,
-                    payload: store.currentList
-                });
+                console.log("playlist updated")
+                store.loadIdNamePairs()
             }
         }
         asyncUpdateCurrentList();
+    }
+
+    store.addCommentToPlaylist = function (comment) {
+        store.listCurrentlyPlaying.comments.push({ commenter: auth.user.username, comment: comment })
+        async function asyncAddComment() {
+            const response = await api.updatePlaylistById(store.listCurrentlyPlaying._id, store.listCurrentlyPlaying)
+            if (response.data.success) {
+                store.loadIdNamePairs()
+            }
+        }
+        asyncAddComment()
     }
 
     store.clear = function (playlist) {

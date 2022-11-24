@@ -52,10 +52,8 @@ function ListCard(props) {
     }, [idNamePair])
 
     async function handleClick() {
-        store.listenPlaylist(playlist)
         if (playlist.songs.length > 0) {
-            console.log(playlist)
-            store.setListPlaying(playlist)
+            store.listenPlaylist(playlist)
         }
     }
 
