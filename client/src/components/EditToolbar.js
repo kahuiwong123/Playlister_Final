@@ -26,8 +26,17 @@ function EditToolbar(props) {
         store.openPublishModal(props.playlist)
     }
 
-    let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#1565c0"
+    
     let display = props.playlist && props.playlist.publishInfo.isPublished ? 'hidden' : 'visible'
+
+    function background() {
+        let isPlaying = props.playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === props.playlist._id
+        if (isPlaying) {
+            return "#ffb300"
+        } else {
+          return (props.playlist && props.playlist.publishInfo.isPublished) ? "#5c6bc0" : "#1565c0"
+        }
+    }
 
     return (
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", px: 2, py: 2 }}>
@@ -46,8 +55,8 @@ function EditToolbar(props) {
                 </Button>}
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="contained" size="medium" onClick={handlePublish} sx={{visibility: display }}>Publish</Button>
-                <Button variant="contained" size="medium" sx={{bgcolor: background, "&:hover": { backgroundColor: darken(background, 0.1) }}}>Duplicate</Button>
+                <Button variant="contained" size="medium" onClick={handlePublish} sx={{visibility: display, bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Publish</Button>
+                <Button variant="contained" size="medium" sx={{bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) }}}>Duplicate</Button>
             </Box>
         </Box>
     )

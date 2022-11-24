@@ -107,16 +107,23 @@ function ListCard(props) {
         store.dislikePlaylist(playlist)
     }
 
-    let background = (playlist && playlist.publishInfo.isPublished) ? "#ffc400" : "#2196f3"
-    let border = (playlist && playlist.publishInfo.isPublished) ? 2 : 0
-    let display = playlist && !playlist.publishInfo.isPublished ? 'none' : 'block'
+    function background() {
+        let isPlaying = playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === playlist._id
+        if (isPlaying) {
+            return "#ffca28"
+        } else {
+          return (playlist && playlist.publishInfo.isPublished) ? "#7986cb" : "#2196f3"  
+        }
+    }
 
+    let border = playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === playlist._id ? 2 : 0
+    let display = playlist && !playlist.publishInfo.isPublished ? 'none' : 'block'
     let cardElement =
         <Box>
             <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{ "&:hover": { backgroundColor: darken(background, 0.1) }, bgcolor: background, height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", border: border }}
+                sx={{ "&:hover": { backgroundColor: darken(background(), 0.1) }, bgcolor: background(), height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", border: border }}
                 button
                 onClick={handleClick}
             >
@@ -154,7 +161,7 @@ function ListCard(props) {
                     </IconButton>
                 </Box>
             </ListItem>
-            <Collapse in={open} timeout="auto" unmountOnExit sx={{ bgcolor: background, border: border, borderTop: 0 }}>
+            <Collapse in={open} timeout="auto" unmountOnExit sx={{ bgcolor: background(), border: border, borderTop: 0 }}>
                 <SongScreen playlist={playlist} />
             </Collapse>
         </Box>

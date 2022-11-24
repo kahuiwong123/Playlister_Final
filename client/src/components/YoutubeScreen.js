@@ -56,10 +56,12 @@ const YoutubeScreen = () => {
 
   function commentSection() {
     if (store.listCurrentlyPlaying && store.listCurrentlyPlaying.comments.length === 0) {
-      return <Typography sx={{fontSize: 18}}>This playlist currently has no comments...</Typography>
+      return <Typography sx={{ fontSize: 18 }}>This playlist currently has no comments...</Typography>
     }
-    return store.listCurrentlyPlaying.comments.map((comment, index) => (<CommentCard key={index} comment={comment} />))
 
+    else if (store.listCurrentlyPlaying && store.listCurrentlyPlaying.comments.length > 0) {
+      return store.listCurrentlyPlaying.comments.map((comment, index) => (<CommentCard key={index} comment={comment} />))
+    }
   }
 
   let display = store.listCurrentlyPlaying && !store.listCurrentlyPlaying.publishInfo.isPublished ? 'hidden' : 'visible'

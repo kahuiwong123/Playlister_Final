@@ -32,7 +32,15 @@ function SongScreen(props) {
         }
     }
 
-    let background = (props.playlist && props.playlist.publishInfo.isPublished) ? "#ff9100" : "#2979ff"
+    function background() {
+        let isPlaying = props.playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === props.playlist._id
+        if (isPlaying) {
+            return "#ffb300"
+        } else {
+            return (props.playlist && props.playlist.publishInfo.isPublished) ? "#5c6bc0" : "#1565c0"
+        }
+    }
+
     let display = props.playlist && props.playlist.publishInfo.isPublished ? 'none' : 'block'
 
     let modalJSX = "";
@@ -65,7 +73,7 @@ function SongScreen(props) {
                     ))
                 }
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                    <Button variant='contained' onClick={handleAddNewSong} startIcon={<AddIcon />} sx={{ width: "100%", borderRadius: 3, my: 1, mx: 2, p: 2, fontSize: 18, display: display }}></Button>
+                    <Button variant='contained' onClick={handleAddNewSong} startIcon={<AddIcon />} sx={{ width: "100%", borderRadius: 3, my: 1, mx: 2, p: 2, fontSize: 18, display: display, "&:hover": { backgroundColor: darken(background(), 0.1) }, bgcolor: background() }}></Button>
                 </Box>
             </List>
             <EditToolbar playlist={props.playlist} />
