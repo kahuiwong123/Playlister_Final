@@ -34,6 +34,7 @@ export const GlobalStoreActionType = {
     HIDE_MODALS: "HIDE_MODALS",
     SET_LIST_PLAYING: "SET_LIST_PLAYING",
     PUBLISH: "PUBLISH",
+    UNPUBLISH: "UNPUBLISH",
     CHANGE_DISPLAY: "CHANGE_DISPLAY",
     SET_SEARCH_TEXT: "SET_SEARCH_TEXT",
     SET_SORT_TYPE: "SET_SORT_TYPE",
@@ -48,7 +49,8 @@ const CurrentModal = {
     DELETE_LIST: "DELETE_LIST",
     EDIT_SONG: "EDIT_SONG",
     REMOVE_SONG: "REMOVE_SONG",
-    PUBLISH_LIST: "PUBLISH_LIST"
+    PUBLISH_LIST: "PUBLISH_LIST",
+    UNPUBLISH_LIST: "UNPUBLISH_LIST"
 }
 
 const ScreenType = {
@@ -344,6 +346,10 @@ function GlobalStoreContextProvider(props) {
                 });
             }
 
+            case GlobalStoreActionType.UNPUBLISH: {
+                return setStore({ ...store, currentList: payload, currentModal: CurrentModal.UNPUBLISH_LIST })
+            }
+
             case GlobalStoreActionType.CHANGE_DISPLAY: {
                 return setStore({ ...store, screenType: payload })
             }
@@ -353,11 +359,11 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.SET_SORT_TYPE: {
-                return setStore({...store, sortType: payload})
+                return setStore({ ...store, sortType: payload })
             }
 
             case GlobalStoreActionType.DISPLAY_AND_SEARCH: {
-                return setStore({...store, screenType: payload.screen, searchText: payload.text})
+                return setStore({ ...store, screenType: payload.screen, searchText: payload.text })
             }
 
             default:
@@ -406,9 +412,15 @@ function GlobalStoreContextProvider(props) {
     store.publishPlaylist = function () {
         const data = new Date()
         const str = data.toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" })
-        const list = { ...store.currentList, publishInfo: { isPublished: true, publishDate: {dateString: str, dateData: data}, publisher: auth.user.username } }
+        const list = { ...store.currentList, publishInfo: { isPublished: true, publishDate: { dateString: str, dateData: data }, publisher: auth.user.username } }
         store.updateCurrentList(list)
 
+    }
+
+    store.unpublishPlaylist = function () {
+        let publishInfo = { isPublished: false, publishDate: null, publisher: auth.user.username }
+        const list = { ...store.currentList, publishInfo: publishInfo }
+        store.updateCurrentList(list)
     }
 
     store.likePlaylist = function (playlist) {
@@ -500,7 +512,7 @@ function GlobalStoreContextProvider(props) {
     store.displayAndSearch = function (screen, text) {
         storeReducer({
             type: GlobalStoreActionType.DISPLAY_AND_SEARCH,
-            payload: {screen: screen, text: text}
+            payload: { screen: screen, text: text }
         })
     }
 
@@ -626,6 +638,10 @@ function GlobalStoreContextProvider(props) {
         return store.currentModal === CurrentModal.PUBLISH_LIST
     }
 
+    store.isUnpublishListModalOpen = () => {
+        return store.currentModal === CurrentModal.UNPUBLISH_LIST
+    }
+
     store.sortByName = () => {
         return store.sortType === SortType.NAME
     }
@@ -674,6 +690,13 @@ function GlobalStoreContextProvider(props) {
     store.openPublishModal = (playlist) => {
         storeReducer({
             type: GlobalStoreActionType.PUBLISH,
+            payload: playlist
+        })
+    }
+
+    store.openUnpublishModal = (playlist) => {
+        storeReducer({
+            type: GlobalStoreActionType.UNPUBLISH,
             payload: playlist
         })
     }

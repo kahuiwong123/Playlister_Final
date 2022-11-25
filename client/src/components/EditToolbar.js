@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth';
 import Button from '@mui/material/Button';
 import Box from "@mui/material/Box"
 import RedoIcon from '@mui/icons-material/Redo';
@@ -14,7 +15,7 @@ import { darken } from '@mui/material';
 */
 function EditToolbar(props) {
     const { store } = useContext(GlobalStoreContext);
-
+    const { auth } = useContext(AuthContext);
     function handleUndo() {
         store.undo(props.playlist);
     }
@@ -26,8 +27,13 @@ function EditToolbar(props) {
         store.openPublishModal(props.playlist)
     }
 
+    function handleUnpublish() {
+        store.openUnpublishModal(props.playlist)
+        console.log(store.currentModal)
+    }
 
-    let display = props.playlist && props.playlist.publishInfo.isPublished ? 'hidden' : 'visible'
+
+    let display = props.playlist && props.playlist.publishInfo.isPublished && props.playlist.ownerEmail !== auth.user.email ? 'hidden' : 'visible'
 
     function background() {
         let isPlaying = props.playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === props.playlist._id
@@ -36,6 +42,14 @@ function EditToolbar(props) {
         } else {
             return (props.playlist && props.playlist.publishInfo.isPublished) ? "#5c6bc0" : "#1565c0"
         }
+    }
+
+    function publishButton() {
+        if (props.playlist && !props.playlist.publishInfo.isPublished) {
+            return <Button variant="contained" size="medium" onClick={handlePublish} sx={{ visibility: display, bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Publish</Button>
+        }
+
+        return <Button variant="contained" size="medium" onClick={handleUnpublish} sx={{ visibility: display, bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Unpublish</Button>
     }
 
     return (
@@ -57,7 +71,7 @@ function EditToolbar(props) {
                 </Button>}
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="contained" size="medium" onClick={handlePublish} sx={{ visibility: display, bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Publish</Button>
+                {publishButton()}
                 <Button variant="contained" size="medium" sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Duplicate</Button>
             </Box>
         </Box>

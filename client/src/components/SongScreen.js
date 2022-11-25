@@ -50,7 +50,7 @@ function SongScreen(props) {
     else if (store.isRemoveSongModalOpen()) {
         modalJSX = <MUIRemoveSongModal />;
     }
-    else if (store.isPublishListModalOpen()) {
+    else if (store.isPublishListModalOpen() || store.isUnpublishListModalOpen()) {
         modalJSX = <PublishPlaylistModal />;
     }
 
