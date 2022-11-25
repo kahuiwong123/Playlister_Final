@@ -35,6 +35,7 @@ export const GlobalStoreActionType = {
     SET_LIST_PLAYING: "SET_LIST_PLAYING",
     PUBLISH: "PUBLISH",
     UNPUBLISH: "UNPUBLISH",
+    DUPLICATE: "DUPLICATE",
     CHANGE_DISPLAY: "CHANGE_DISPLAY",
     SET_SEARCH_TEXT: "SET_SEARCH_TEXT",
     SET_SORT_TYPE: "SET_SORT_TYPE",
@@ -50,7 +51,8 @@ const CurrentModal = {
     EDIT_SONG: "EDIT_SONG",
     REMOVE_SONG: "REMOVE_SONG",
     PUBLISH_LIST: "PUBLISH_LIST",
-    UNPUBLISH_LIST: "UNPUBLISH_LIST"
+    UNPUBLISH_LIST: "UNPUBLISH_LIST",
+    DUPLICATE_LIST: "DUPLICATE_LIST"
 }
 
 const ScreenType = {
@@ -366,6 +368,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({ ...store, screenType: payload.screen, searchText: payload.text })
             }
 
+            case GlobalStoreActionType.DUPLICATE: {
+                // let newTransactionsList = store.transactionList
+                // newTransactionsList[payload._id] = new jsTPS()
+                return setStore({ ...store, currentList: payload, currentModal: CurrentModal.DUPLICATE_LIST })
+            }
+
             default:
                 return store;
         }
@@ -415,6 +423,26 @@ function GlobalStoreContextProvider(props) {
         const list = { ...store.currentList, publishInfo: { isPublished: true, publishDate: { dateString: str, dateData: data }, publisher: auth.user.username } }
         store.updateCurrentList(list)
 
+    }
+
+    store.duplicatePlaylist = function () {
+        const asyncDuplicate = async () => {
+            const { name, songs } = store.currentList
+            console.log(songs)
+            let publishInfo = { isPublished: false, publishDate: null, publisher: auth.user.username }
+            const response = await api.createPlaylist(name, songs, auth.user.email, 0, 0, 0, publishInfo, [], [], [])
+            if (response.status === 201) {
+                // tps.clearAllTransactions();
+                let newList = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: newList
+                }
+                );
+                store.loadIdNamePairs()
+            }
+        }
+        asyncDuplicate()
     }
 
     store.unpublishPlaylist = function () {
@@ -624,6 +652,7 @@ function GlobalStoreContextProvider(props) {
             payload: {}
         });
     }
+
     store.isDeleteListModalOpen = () => {
         return store.currentModal === CurrentModal.DELETE_LIST;
     }
@@ -640,6 +669,10 @@ function GlobalStoreContextProvider(props) {
 
     store.isUnpublishListModalOpen = () => {
         return store.currentModal === CurrentModal.UNPUBLISH_LIST
+    }
+
+    store.isDuplicateListModalOpen = () => {
+        return store.currentModal === CurrentModal.DUPLICATE_LIST
     }
 
     store.sortByName = () => {
@@ -697,6 +730,13 @@ function GlobalStoreContextProvider(props) {
     store.openUnpublishModal = (playlist) => {
         storeReducer({
             type: GlobalStoreActionType.UNPUBLISH,
+            payload: playlist
+        })
+    }
+
+    store.openDuplicateModal = (playlist) => {
+        storeReducer({
+            type: GlobalStoreActionType.DUPLICATE,
             payload: playlist
         })
     }

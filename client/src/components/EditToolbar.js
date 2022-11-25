@@ -29,7 +29,10 @@ function EditToolbar(props) {
 
     function handleUnpublish() {
         store.openUnpublishModal(props.playlist)
-        console.log(store.currentModal)
+    }
+
+    function handleDuplicate() {
+        store.openDuplicateModal(props.playlist)
     }
 
 
@@ -72,7 +75,7 @@ function EditToolbar(props) {
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
                 {publishButton()}
-                <Button variant="contained" size="medium" sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Duplicate</Button>
+                <Button onClick={handleDuplicate} variant="contained" size="medium" sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Duplicate</Button>
             </Box>
         </Box>
     )

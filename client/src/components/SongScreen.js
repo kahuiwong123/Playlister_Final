@@ -5,6 +5,7 @@ import EditToolbar from './EditToolbar.js'
 import MUIEditSongModal from './MUIEditSongModal'
 import MUIRemoveSongModal from './MUIRemoveSongModal'
 import PublishPlaylistModal from './PublishPlaylistModal.js'
+import DuplicatePlaylistModal from './DuplicatePlaylistModal.js'
 import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import List from '@mui/material/List';
@@ -52,6 +53,10 @@ function SongScreen(props) {
     }
     else if (store.isPublishListModalOpen() || store.isUnpublishListModalOpen()) {
         modalJSX = <PublishPlaylistModal />;
+    }
+
+    else if (store.isDuplicateListModalOpen()) {
+        modalJSX = <DuplicatePlaylistModal />
     }
 
     function handleAddNewSong() {
