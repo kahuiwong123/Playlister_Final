@@ -10,6 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import Chip from '@mui/material/Chip';
+import CancelIcon from '@mui/icons-material/Cancel';
 const PlaylistToolbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { store } = useContext(GlobalStoreContext)
@@ -48,6 +49,12 @@ const PlaylistToolbar = () => {
         }
     }
 
+    const handleReset = (event) => {
+        event.stopPropagation()
+        setText("")
+        store.setSearchText(null)
+    }
+
     const onFocus = () => setFocused(true)
     const onBlur = () => setFocused(false)
 
@@ -65,12 +72,21 @@ const PlaylistToolbar = () => {
                 </IconButton>
                 <Chip label={store.screenType} sx={{width: 100, fontSize: "medium"}}/>
             </Box>
-            <TextField error={focused && text===""} onBlur={onBlur} onFocus={onFocus} label={focused && text==="" ? "Search string cannot be empty" : "Search"} value={text} onChange={handleTextChange} onKeyDown={handleSearch} variant='filled' sx={{ width: "45%" }} size='large' InputProps={{
+            <TextField error={focused && text===""}  onBlur={onBlur} onFocus={onFocus} label={focused && text==="" ? "Search string cannot be empty" : "Search"} value={text} onChange={handleTextChange} onKeyDown={handleSearch} variant='filled' sx={{ width: "45%" }} size='large' InputProps={{
                 startAdornment: (
-                    <InputAdornment position="start">
+                    <InputAdornment position="start" >
                         <SearchIcon />
                     </InputAdornment>
                 ),
+
+                endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleReset} sx={{color: "#757575"}}>
+                        <CancelIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                
             }} />
             <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
                 <InputLabel>SORT BY</InputLabel>

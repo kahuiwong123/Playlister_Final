@@ -47,8 +47,13 @@ const PlaylistScreen = () => {
 
     function search() {
         if (store && store.searchText !== null) {
-            console.log("searching: " + store.searchText)
-            setList(prev => prev.filter(playlist => { return playlist.name.toLowerCase().includes(store.searchText.toLowerCase()) }))
+            if (store.isAllLists() || store.isHome()) {
+                setList(prev => prev.filter(playlist => { return playlist.name.toLowerCase().includes(store.searchText.toLowerCase()) }))
+            }
+
+            else if (store.isUsers()) {
+                setList(prev => prev.filter(playlist => { return playlist.publishInfo.publisher.toLowerCase().includes(store.searchText.toLowerCase()) }))
+            }
             console.log(list)
         }
     }
