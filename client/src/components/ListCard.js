@@ -40,6 +40,11 @@ function ListCard(props) {
         setPlaylist(list)
     }, [list])
 
+
+    useEffect(() => {
+
+    }, [store.screenType])
+
     async function handleClick() {
         if (playlist.songs.length > 0) {
             store.listenPlaylist(playlist)
@@ -93,12 +98,17 @@ function ListCard(props) {
         store.dislikePlaylist(playlist)
     }
 
+    function handleLink(event) {
+        event.stopPropagation()
+        store.displayAndSearch("USERS", playlist.publishInfo.publisher)
+    }
+
     function background() {
         let isPlaying = playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === playlist._id
         if (isPlaying) {
             return "#ffca28"
         } else {
-          return (playlist && playlist.publishInfo.isPublished) ? "#7986cb" : "#2196f3"  
+            return (playlist && playlist.publishInfo.isPublished) ? "#7986cb" : "#2196f3"
         }
     }
 
@@ -115,8 +125,8 @@ function ListCard(props) {
             >
                 <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
                     <Typography sx={{ fontSize: 24 }}>{list.name}</Typography>
-                    <Typography sx={{ fontSize: 14 }}><span style={{ marginRight: "10px" }}>By: </span> {playlist && <Link underline="hover" color="inherit">{playlist.publishInfo.publisher}</Link>}</Typography>
-                    <Typography sx={{ fontSize: 14, display: display }}>Published: {playlist && playlist.publishInfo.publishDate}</Typography>
+                    <Typography sx={{ fontSize: 14 }}><span style={{ marginRight: "10px" }}>By: </span> {playlist && <Link onClick={handleLink} sx={{ "&:hover": { color: "#2196f3" } }} underline="hover" color="inherit">{playlist.publishInfo.publisher}</Link>}</Typography>
+                    <Typography sx={{ fontSize: 14, display: display }}>Published: {playlist && playlist.publishInfo.isPublished && playlist.publishInfo.publishDate.dateString}</Typography>
                     <Typography sx={{ fontSize: 14, display: display }}>Listens: {playlist && playlist.listens}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>

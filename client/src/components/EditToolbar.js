@@ -26,7 +26,7 @@ function EditToolbar(props) {
         store.openPublishModal(props.playlist)
     }
 
-    
+
     let display = props.playlist && props.playlist.publishInfo.isPublished ? 'hidden' : 'visible'
 
     function background() {
@@ -34,7 +34,7 @@ function EditToolbar(props) {
         if (isPlaying) {
             return "#ffb300"
         } else {
-          return (props.playlist && props.playlist.publishInfo.isPublished) ? "#5c6bc0" : "#1565c0"
+            return (props.playlist && props.playlist.publishInfo.isPublished) ? "#5c6bc0" : "#1565c0"
         }
     }
 
@@ -44,19 +44,21 @@ function EditToolbar(props) {
                 {props.playlist && !props.playlist.publishInfo.isPublished && <Button
                     disabled={!store.canUndo(props.playlist)}
                     onClick={handleUndo}
-                    variant="contained">
+                    variant="contained"
+                    sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>
                     <UndoIcon />
                 </Button>}
                 {props.playlist && !props.playlist.publishInfo.isPublished && <Button
                     disabled={!store.canRedo(props.playlist)}
                     onClick={handleRedo}
-                    variant="contained">
+                    variant="contained"
+                    sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>
                     <RedoIcon />
                 </Button>}
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="contained" size="medium" onClick={handlePublish} sx={{visibility: display, bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Publish</Button>
-                <Button variant="contained" size="medium" sx={{bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) }}}>Duplicate</Button>
+                <Button variant="contained" size="medium" onClick={handlePublish} sx={{ visibility: display, bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Publish</Button>
+                <Button variant="contained" size="medium" sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Duplicate</Button>
             </Box>
         </Box>
     )

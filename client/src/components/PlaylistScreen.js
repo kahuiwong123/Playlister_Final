@@ -16,7 +16,7 @@ const PlaylistScreen = () => {
 
     useEffect(() => {
         display()
-    }, [store.screenType, store.idNamePairs, store.searchText])
+    }, [store.screenType, store.idNamePairs, store.searchText, store.sortType])
 
     // useEffect(() => {
     //     search()
@@ -32,14 +32,18 @@ const PlaylistScreen = () => {
     function display() {
         if (store && store.isHome()) {
             setList(store.idNamePairs)
+            // console.log(list)
             search()
+            sort()
         }
 
         if (store && (store.isAllLists() || store.isUsers())) {
             const getPlaylists = async () => {
                 let playlists = await store.getAllLists()
                 setList(playlists)
+                // console.log(list)
                 search()
+                sort()
             }
             getPlaylists()
         }
@@ -54,7 +58,29 @@ const PlaylistScreen = () => {
             else if (store.isUsers()) {
                 setList(prev => prev.filter(playlist => { return playlist.publishInfo.publisher.toLowerCase().includes(store.searchText.toLowerCase()) }))
             }
-            console.log(list)
+            // console.log(list)
+        }
+    }
+
+    function sort() {
+        if (list && store && store.sortByListens()) {
+            setList(prev => [].concat(prev).sort((a, b) => b.listens - a.listens))
+        }
+
+        else if (list && store && store.sortByName()) {
+            setList(prev => [].concat(prev).sort((a, b) => a.name.localeCompare(b.name)))
+        }
+
+        else if (list && store && store.sortByLikes()) {
+            setList(prev => [].concat(prev).sort((a, b) => b.likes - a.likes))
+        }
+
+        else if (list && store && store.sortByDislikes()) {
+            setList(prev => [].concat(prev).sort((a, b) => b.dislikes - a.dislikes))
+        }
+
+        else if (list && store && store.sortByDate()) {
+            setList(prev => [].concat(prev).sort((a, b) => b.publishInfo.publishDate.dateData > a.publishInfo.publishDate.dateData))
         }
     }
 

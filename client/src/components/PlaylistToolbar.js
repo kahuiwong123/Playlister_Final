@@ -1,5 +1,5 @@
 import React from 'react'
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Toolbar, IconButton, Box, TextField, Menu, MenuItem } from '@mui/material'
 import { GlobalStoreContext } from '../store';
 import HomeIcon from '@mui/icons-material/Home';
@@ -17,6 +17,13 @@ const PlaylistToolbar = () => {
     const [text, setText] = useState("")
     const [focused, setFocused] = React.useState(false)
     const open = Boolean(anchorEl);
+
+    useEffect(() => {
+        if (store && store.searchText) {
+            setText(store.searchText)
+        }
+    }, [store.searchText])
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -38,7 +45,7 @@ const PlaylistToolbar = () => {
 
     const handleTextChange = (e) => {
         setText(e.target.value)
-        
+
     }
 
     const handleSearch = (event) => {
@@ -53,6 +60,11 @@ const PlaylistToolbar = () => {
         event.stopPropagation()
         setText("")
         store.setSearchText(null)
+    }
+
+    const handleSort = (type) => {
+        store.setSortType(type)
+        setAnchorEl(null)
     }
 
     const onFocus = () => setFocused(true)
@@ -70,9 +82,9 @@ const PlaylistToolbar = () => {
                 <IconButton aria-label='person' onClick={handleUsers}>
                     <PersonIcon fontSize='large' />
                 </IconButton>
-                <Chip label={store.screenType} sx={{width: 100, fontSize: "medium"}}/>
+                <Chip label={store.screenType} sx={{ width: 100, fontSize: "medium" }} />
             </Box>
-            <TextField error={focused && text===""}  onBlur={onBlur} onFocus={onFocus} label={focused && text==="" ? "Search string cannot be empty" : "Search"} value={text} onChange={handleTextChange} onKeyDown={handleSearch} variant='filled' sx={{ width: "45%" }} size='large' InputProps={{
+            <TextField error={focused && text === ""} onBlur={onBlur} onFocus={onFocus} label={focused && text === "" ? "Search string cannot be empty" : "Search"} value={text} onChange={handleTextChange} onKeyDown={handleSearch} variant='filled' sx={{ width: "45%" }} size='large' InputProps={{
                 startAdornment: (
                     <InputAdornment position="start" >
                         <SearchIcon />
@@ -81,15 +93,16 @@ const PlaylistToolbar = () => {
 
                 endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={handleReset} sx={{color: "#757575"}}>
-                        <CancelIcon />
-                      </IconButton>
+                        <IconButton onClick={handleReset} sx={{ color: "#757575" }}>
+                            <CancelIcon />
+                        </IconButton>
                     </InputAdornment>
-                  ),
-                
+                ),
+
             }} />
             <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
                 <InputLabel>SORT BY</InputLabel>
+                <Chip label={store.sortType} sx={{ width: 100, fontSize: "medium" }} />
                 <IconButton aria-label='sort' onClick={handleClick}>
                     <SortIcon fontSize='large' />
                 </IconButton>
@@ -99,11 +112,11 @@ const PlaylistToolbar = () => {
                     open={open}
                     onClose={handleClose}
                 >
-                    <MenuItem onClick={handleClose}>Name (A-Z)</MenuItem>
-                    <MenuItem onClick={handleClose}>Publish Date (Newest)</MenuItem>
-                    <MenuItem onClick={handleClose}>Listens (High-Low)</MenuItem>
-                    <MenuItem onClick={handleClose}>Likes (High-Low)</MenuItem>
-                    <MenuItem onClick={handleClose}>Dislikes (High-Low)</MenuItem>
+                    <MenuItem onClick={() => { handleSort("NAME") }}>Name (A-Z)</MenuItem>
+                    <MenuItem onClick={() => { handleSort("DATE") }}>Publish Date (Newest)</MenuItem>
+                    <MenuItem onClick={() => { handleSort("LISTENS") }}>Listens (High-Low)</MenuItem>
+                    <MenuItem onClick={() => { handleSort("LIKES") }}>Likes (High-Low)</MenuItem>
+                    <MenuItem onClick={() => { handleSort("DISLIKES") }}>Dislikes (High-Low)</MenuItem>
                 </Menu>
             </Box>
         </Toolbar>
