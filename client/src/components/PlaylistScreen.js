@@ -12,15 +12,11 @@ const PlaylistScreen = () => {
 
     useEffect(() => {
         store.loadIdNamePairs()
-    }, [])
+    }, [store.screenType])
 
     useEffect(() => {
         display()
     }, [store.screenType, store.idNamePairs, store.searchText, store.sortType])
-
-    // useEffect(() => {
-    //     search()
-    // }, [store.searchText, store.screenType])
 
     function handleCreateNewList() {
         store.createNewList();

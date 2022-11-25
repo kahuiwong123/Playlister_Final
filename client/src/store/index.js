@@ -483,6 +483,7 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.SET_LIST_PLAYING,
                     payload: playlist
                 })
+                
             }
         }
         temp(playlist)
