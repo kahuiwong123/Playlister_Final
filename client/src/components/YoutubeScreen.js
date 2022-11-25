@@ -71,7 +71,7 @@ const YoutubeScreen = () => {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="basic tabs example" centered>
           <Tab label="Player" {...a11yProps(0)} />
-          <Tab label="Comments" {...a11yProps(1)} />
+          <Tab label="Comments" {...a11yProps(1)} disabled={!store.listCurrentlyPlaying} />
         </Tabs>
       </Box>
       <YouTubePlayerExample index={value} />

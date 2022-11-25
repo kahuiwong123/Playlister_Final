@@ -22,15 +22,15 @@ function SongScreen(props) {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
-    document.onkeydown = (e) => {
-        if (e.key === "z" && e.ctrlKey) {
-            store.undo(props.playlist)
-        }
+    // document.onkeydown = (e) => {
+    //     if (e.key === "z" && e.ctrlKey) {
+    //         store.undo(props.playlist)
+    //     }
 
-        else if (e.key === "y" && e.ctrlKey) {
-            store.redo(props.playlist)
-        }
-    }
+    //     else if (e.key === "y" && e.ctrlKey) {
+    //         store.redo(props.playlist)
+    //     }
+    // }
 
     function background() {
         let isPlaying = props.playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === props.playlist._id

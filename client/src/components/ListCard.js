@@ -33,23 +33,12 @@ function ListCard(props) {
     const [editActive, setEditActive] = useState(false);
     const [playlist, setPlaylist] = useState(null)
     const [text, setText] = useState("");
-    const { idNamePair, selected, list } = props;
+    const { list } = props;
     const [open, setOpen] = useState(false);
 
-
     useEffect(() => {
-        if (list) {
-            setPlaylist(list)
-        }
-    }, [])
-
-    useEffect(() => {
-        const getPlaylist = async () => {
-            let playlist = await store.getCurrentList(idNamePair._id)
-            setPlaylist(playlist)
-        }
-        getPlaylist()
-    }, [idNamePair])
+        setPlaylist(list)
+    }, [list])
 
     async function handleClick() {
         if (playlist.songs.length > 0) {
@@ -59,9 +48,6 @@ function ListCard(props) {
 
     function handleExpand(event) {
         event.stopPropagation()
-        // if (open && playlist && !playlist.publishInfo.isPublished) {
-        //     store.clear(playlist)
-        // }
         setOpen(!open)
     }
 
@@ -121,14 +107,14 @@ function ListCard(props) {
     let cardElement =
         <Box>
             <ListItem
-                id={idNamePair._id}
-                key={idNamePair._id}
+                id={list._id}
+                key={list._id}
                 sx={{ "&:hover": { backgroundColor: darken(background(), 0.1) }, bgcolor: background(), height: "20%", fontSize: 24, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", border: border }}
                 button
                 onClick={handleClick}
             >
                 <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-                    <Typography sx={{ fontSize: 24 }}>{idNamePair.name}</Typography>
+                    <Typography sx={{ fontSize: 24 }}>{list.name}</Typography>
                     <Typography sx={{ fontSize: 14 }}><span style={{ marginRight: "10px" }}>By: </span> {playlist && <Link underline="hover" color="inherit">{playlist.publishInfo.publisher}</Link>}</Typography>
                     <Typography sx={{ fontSize: 14, display: display }}>Published: {playlist && playlist.publishInfo.publishDate}</Typography>
                     <Typography sx={{ fontSize: 14, display: display }}>Listens: {playlist && playlist.listens}</Typography>
@@ -151,7 +137,7 @@ function ListCard(props) {
                     </Box>
                     <Box sx={{ p: 1, display: playlist && playlist.publishInfo.isPublished ? 'none' : 'block' }}>
                         <IconButton onClick={(event) => {
-                            handleDeleteList(event, idNamePair._id)
+                            handleDeleteList(event, list._id)
                         }} aria-label='delete'>
                             <DeleteIcon style={{ fontSize: '24pt' }} />
                         </IconButton>
@@ -172,14 +158,14 @@ function ListCard(props) {
                 margin="normal"
                 required
                 fullWidth
-                id={"list-" + idNamePair._id}
+                id={"list-" + list._id}
                 label="Playlist Name"
                 name="name"
                 autoComplete="Playlist Name"
                 className='list-card'
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
-                defaultValue={idNamePair.name}
+                defaultValue={list.name}
                 inputProps={{ style: { fontSize: 48 } }}
                 InputLabelProps={{ style: { fontSize: 24 } }}
                 autoFocus

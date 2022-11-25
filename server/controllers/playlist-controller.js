@@ -126,16 +126,16 @@ getPlaylistPairs = async (req, res) => {
                 else {
                     console.log("Send the Playlist pairs");
                     // PUT ALL THE LISTS INTO ID, NAME PAIRS
-                    let pairs = [];
-                    for (let key in playlists) {
-                        let list = playlists[key];
-                        let pair = {
-                            _id: list._id,
-                            name: list.name
-                        };
-                        pairs.push(pair);
-                    }
-                    return res.status(200).json({ success: true, idNamePairs: pairs })
+                    // let pairs = [];
+                    // for (let key in playlists) {
+                    //     let list = playlists[key];
+                    //     let pair = {
+                    //         _id: list._id,
+                    //         name: list.name
+                    //     };
+                    //     pairs.push(pair);
+                    // }
+                    return res.status(200).json({ success: true, playlists: playlists })
                 }
             }).catch(err => console.log(err))
         }

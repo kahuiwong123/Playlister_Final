@@ -1,5 +1,5 @@
 import React from 'react'
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Toolbar, IconButton, Box, TextField, Menu, MenuItem } from '@mui/material'
 import { GlobalStoreContext } from '../store';
 import HomeIcon from '@mui/icons-material/Home';
@@ -13,6 +13,8 @@ import Chip from '@mui/material/Chip';
 const PlaylistToolbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { store } = useContext(GlobalStoreContext)
+    const [text, setText] = useState("")
+    const [focused, setFocused] = React.useState(false)
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -33,6 +35,22 @@ const PlaylistToolbar = () => {
         store.displayUsers()
     }
 
+    const handleTextChange = (e) => {
+        setText(e.target.value)
+        
+    }
+
+    const handleSearch = (event) => {
+        if (event.keyCode == 13 && text !== "") {
+            console.log(text)
+            store.setSearchText(text)
+
+        }
+    }
+
+    const onFocus = () => setFocused(true)
+    const onBlur = () => setFocused(false)
+
     return (
         <Toolbar disableGutters sx={{ bgcolor: "#e0e0e0", width: "100%", height: "12%", position: "relative", top: "10%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <Box>
@@ -47,7 +65,7 @@ const PlaylistToolbar = () => {
                 </IconButton>
                 <Chip label={store.screenType} sx={{width: 100, fontSize: "medium"}}/>
             </Box>
-            <TextField variant='filled' sx={{ width: "45%" }} label="Search" size='large' InputProps={{
+            <TextField error={focused && text===""} onBlur={onBlur} onFocus={onFocus} label={focused && text==="" ? "Search string cannot be empty" : "Search"} value={text} onChange={handleTextChange} onKeyDown={handleSearch} variant='filled' sx={{ width: "45%" }} size='large' InputProps={{
                 startAdornment: (
                     <InputAdornment position="start">
                         <SearchIcon />
