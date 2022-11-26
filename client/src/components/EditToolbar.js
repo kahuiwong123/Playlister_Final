@@ -36,7 +36,7 @@ function EditToolbar(props) {
     }
 
 
-    let display = props.playlist && props.playlist.publishInfo.isPublished && props.playlist.ownerEmail !== auth.user.email ? 'hidden' : 'visible'
+    let display = !auth.notGuest  || (props.playlist && props.playlist.publishInfo.isPublished && props.playlist.ownerEmail !== auth.user.email) ? 'hidden' : 'visible'
 
     function background() {
         let isPlaying = props.playlist && store.listCurrentlyPlaying && store.listCurrentlyPlaying._id === props.playlist._id
@@ -75,7 +75,7 @@ function EditToolbar(props) {
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
                 {publishButton()}
-                <Button onClick={handleDuplicate} variant="contained" size="medium" sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Duplicate</Button>
+                <Button disabled={auth && !auth.notGuest} onClick={handleDuplicate} variant="contained" size="medium" sx={{ bgcolor: background(), "&:hover": { backgroundColor: darken(background(), 0.1) } }}>Duplicate</Button>
             </Box>
         </Box>
     )

@@ -34,52 +34,65 @@ getLoggedIn = async (req, res) => {
 loginUser = async (req, res) => {
     console.log("loginUser");
     try {
-        const { email, password } = req.body;
+        const { email, password, notGuest } = req.body;
+        if (!notGuest) {
+            const token = auth.signToken("guest");
+            console.log(token);
 
-        if (!email || !password) {
-            return res
-                .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
-        }
-
-        const existingUser = await User.findOne({ email: email });
-        console.log("existingUser: " + existingUser);
-        if (!existingUser) {
-            return res
-                .status(401)
-                .json({
-                    errorMessage: "Wrong email or password provided."
-                })
-        }
-
-        console.log("provided password: " + password);
-        const passwordCorrect = await bcrypt.compare(password, existingUser.passwordHash);
-        if (!passwordCorrect) {
-            console.log("Incorrect password");
-            return res
-                .status(401)
-                .json({
-                    errorMessage: "Wrong email or password provided."
-                })
-        }
-
-        // LOGIN THE USER
-        const token = auth.signToken(existingUser._id);
-        console.log(token);
-
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: true
-        }).status(200).json({
-            success: true,
-            user: {
-                firstName: existingUser.firstName,
-                lastName: existingUser.lastName,
-                username: existingUser.username,
-                email: existingUser.email
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: true
+            }).status(200).json({
+                success: true,
+                user: null
+            })
+        } else {
+            if (!email || !password) {
+                return res
+                    .status(400)
+                    .json({ errorMessage: "Please enter all required fields." });
             }
-        })
+
+            const existingUser = await User.findOne({ email: email });
+            console.log("existingUser: " + existingUser);
+            if (!existingUser) {
+                return res
+                    .status(401)
+                    .json({
+                        errorMessage: "Wrong email or password provided."
+                    })
+            }
+
+            console.log("provided password: " + password);
+            const passwordCorrect = await bcrypt.compare(password, existingUser.passwordHash);
+            if (!passwordCorrect) {
+                console.log("Incorrect password");
+                return res
+                    .status(401)
+                    .json({
+                        errorMessage: "Wrong email or password provided."
+                    })
+            }
+
+            // LOGIN THE USER
+            const token = auth.signToken(existingUser._id);
+            console.log(token);
+
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: true
+            }).status(200).json({
+                success: true,
+                user: {
+                    firstName: existingUser.firstName,
+                    lastName: existingUser.lastName,
+                    username: existingUser.username,
+                    email: existingUser.email
+                }
+            })
+        }
 
     } catch (err) {
         console.error(err);

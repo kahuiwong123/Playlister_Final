@@ -9,10 +9,10 @@ import YoutubeScreen from './YoutubeScreen';
     
     @author McKilla Gorilla
 */
-const HomeScreen = () => {
+const HomeScreen = (props) => {
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <PlaylistToolbar />
+            <PlaylistToolbar notGuest={props.notGuest}/>
             <Box sx={{ display: "flex", flexDirection: "row", bgcolor: "#e0e0e0" }}>
                 <PlaylistScreen />
                 <YoutubeScreen />

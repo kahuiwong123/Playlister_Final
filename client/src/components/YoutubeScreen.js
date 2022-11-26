@@ -3,12 +3,14 @@ import { Box, Tabs, Tab, List, TextField, Container, Typography } from "@mui/mat
 import { useState } from 'react'
 import YouTubePlayerExample from './PlaylisterYouTubePlayer'
 import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
 import CommentCard from './CommentCard'
 import { useContext } from 'react'
 const YoutubeScreen = () => {
 
   const [value, setValue] = React.useState(0);
   const { store } = useContext(GlobalStoreContext)
+  const auth = useContext(AuthContext)
   const [text, setText] = useState("")
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -79,7 +81,7 @@ const YoutubeScreen = () => {
         <List sx={{ height: "350px", overflow: "scroll", display: "flex", flexDirection: "column", gap: 1, alignItems: "left" }}>
           {commentSection()}
         </List>
-        <TextField sx={{ width: "100%", mt: 3, visibility: display }} label="Add Comment" value={text} onChange={handleTextChange} onKeyDown={handleAddComment} autoFocus />
+        <TextField disabled={auth && !auth.notGuest} sx={{ width: "100%", mt: 3, visibility: display }} label="Add Comment" value={text} onChange={handleTextChange} onKeyDown={handleAddComment} autoFocus />
       </TabPanel>
     </Box>
   )

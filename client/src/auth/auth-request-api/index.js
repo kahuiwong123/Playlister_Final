@@ -23,11 +23,12 @@ const api = axios.create({
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
 
-export const getLoggedIn = () => api.get(`/loggedIn/`);
-export const loginUser = (email, password) => {
+export const getLoggedIn = () => api.get(`/loggedIn/`).catch(err => { return err.response });
+export const loginUser = (email, password, notGuest) => {
     return api.post(`/login/`, {
         email: email,
-        password: password
+        password: password,
+        notGuest: notGuest
     }).catch(err => { return err.response })
 }
 export const logoutUser = () => api.get(`/logout/`)

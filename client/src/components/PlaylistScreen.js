@@ -3,20 +3,26 @@ import { useEffect, useContext, useState } from 'react';
 import { GlobalStoreContext } from '../store'
 import { Box, List, Button, Typography } from '@mui/material';
 import ListCard from './ListCard';
+import AuthContext from '../auth';
 import MUIDeleteModal from './MUIDeleteModal';
 import AddIcon from '@mui/icons-material/Add';
 
 const PlaylistScreen = () => {
     const { store } = useContext(GlobalStoreContext);
+    const auth = useContext(AuthContext)
     const [list, setList] = useState(null)
-
-    useEffect(() => {
-        store.loadIdNamePairs()
-    }, [store.screenType])
 
     useEffect(() => {
         display()
     }, [store.screenType, store.idNamePairs, store.searchText, store.sortType])
+
+    useEffect(() => { 
+        const temp = async () => {
+            await store.getTPS()
+            display()
+        }
+        temp()
+    }, [auth.notGuest])
 
     function handleCreateNewList() {
         store.createNewList();
@@ -28,7 +34,6 @@ const PlaylistScreen = () => {
     function display() {
         if (store && store.isHome()) {
             setList(store.idNamePairs)
-            // console.log(list)
             search()
             sort()
         }
@@ -37,7 +42,7 @@ const PlaylistScreen = () => {
             const getPlaylists = async () => {
                 let playlists = await store.getAllLists()
                 setList(playlists)
-                // console.log(list)
+                console.log(list)
                 search()
                 sort()
             }

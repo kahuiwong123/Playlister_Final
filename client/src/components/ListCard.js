@@ -147,12 +147,12 @@ function ListCard(props) {
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Box sx={{ p: 1, display: playlist && !playlist.publishInfo.isPublished ? 'none' : 'block' }} >
-                        <IconButton onClick={handleLike}>
-                            {playlist && playlist.likedUsers.includes(auth.user.username) ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
+                        <IconButton disabled={auth && !auth.notGuest} onClick={handleLike}>
+                            {playlist && auth.user && playlist.likedUsers.includes(auth.user.username) ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
                             <Typography sx={{ pl: 2 }}>{playlist && playlist.likes}</Typography>
                         </IconButton>
-                        <IconButton onClick={handleDislike}>
-                            {playlist && playlist.dislikedUsers.includes(auth.user.username) ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
+                        <IconButton disabled={auth && !auth.notGuest} onClick={handleDislike}>
+                            {playlist && auth.user && playlist.dislikedUsers.includes(auth.user.username) ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
                             <Typography sx={{ pl: 2 }}>{playlist && playlist.dislikes}</Typography>
                         </IconButton>
                     </Box>

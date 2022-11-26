@@ -73,6 +73,7 @@ const SortType = {
 // AVAILABLE TO THE REST OF THE APPLICATION
 function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
+    const { auth } = useContext(AuthContext);
 
     const [store, setStore] = useState({
         currentModal: CurrentModal.NONE,
@@ -92,27 +93,13 @@ function GlobalStoreContextProvider(props) {
     });
     const history = useHistory();
 
-    console.log("inside useGlobalStore");
-
     // SINCE WE'VE WRAPPED THE STORE IN THE AUTH CONTEXT WE CAN ACCESS THE USER HERE
-    const { auth } = useContext(AuthContext);
-    console.log("auth: " + auth);
 
-    useEffect(() => {
-        const getTPS = async () => {
-            let response = await api.getPlaylistPairs()
-            if (response.data.success) {
-                let playlists = response.data.playlists
-                let obj = {}
-                playlists.forEach(({ _id }) => {
-                    obj[_id] = new jsTPS()
-                })
-                setStore({ ...store, transactionList: obj })
-            }
-
-        }
-        getTPS()
-    }, [])
+    // useEffect(() => {
+    //     if (auth && !auth.notGuest) {
+    //         setStore({...store, screenType: ScreenType.ALLLISTS})
+    //     } 
+    // }, [])
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
@@ -406,7 +393,9 @@ function GlobalStoreContextProvider(props) {
                 updateList(playlist);
             }
         }
-        asyncChangeListName(id);
+        if (auth.notGuest) {
+            asyncChangeListName(id);
+        }
     }
 
     store.closeCurrentList = function () {
@@ -513,6 +502,23 @@ function GlobalStoreContextProvider(props) {
 
     }
 
+
+    store.getTPS = async () => {
+        if (auth.notGuest) {
+            let response = await api.getPlaylistPairs()
+            if (response.data.success) {
+                let playlists = response.data.playlists
+                let obj = {}
+                playlists.forEach(({ _id }) => {
+                    obj[_id] = new jsTPS()
+                })
+                setStore({ ...store, screenType: ScreenType.HOME, idNamePairs: playlists, transactionList: obj })
+            }
+        } else {
+            setStore({ ...store, screenType: ScreenType.ALLLISTS })
+        }
+    }
+
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
         let newListName = store.checkDuplicateName("Untitled");
@@ -595,7 +601,9 @@ function GlobalStoreContextProvider(props) {
                 console.log("API FAILED TO GET THE LIST PAIRS");
             }
         }
-        asyncLoadIdNamePairs();
+        if (auth.notGuest) {
+            asyncLoadIdNamePairs();
+        }
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
@@ -710,7 +718,7 @@ function GlobalStoreContextProvider(props) {
 
 
     store.checkDuplicateName = (newName) => {
-        
+
         const nameList = store.idNamePairs.map(playlist => playlist.name)
         if (!nameList.includes(newName)) {
             return newName

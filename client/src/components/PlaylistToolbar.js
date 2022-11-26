@@ -11,9 +11,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import Chip from '@mui/material/Chip';
 import CancelIcon from '@mui/icons-material/Cancel';
-const PlaylistToolbar = () => {
+import AuthContext from '../auth';
+const PlaylistToolbar = (props) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { store } = useContext(GlobalStoreContext)
+    const auth = useContext(AuthContext)
     const [text, setText] = useState("")
     const [focused, setFocused] = React.useState(false)
     const open = Boolean(anchorEl);
@@ -73,7 +75,7 @@ const PlaylistToolbar = () => {
     return (
         <Toolbar disableGutters sx={{ bgcolor: "#e0e0e0", width: "100%", height: "12%", position: "relative", top: "10%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <Box>
-                <IconButton aria-label='home' onClick={handleHome}>
+                <IconButton aria-label='home' disabled={!props.notGuest} onClick={handleHome}>
                     <HomeIcon fontSize='large' />
                 </IconButton>
                 <IconButton aria-label='people' onClick={handleAllLists}>

@@ -1,10 +1,21 @@
 import { TextField, Button, Link, Grid, Box, Typography, ScopedCssBaseline } from "@mui/material";
 import Copyright from "./Copyright"
+import AuthContext from '../auth';
+import { useContext } from "react"
+
 
 export default function SplashScreen() {
+    const { auth } = useContext(AuthContext)
+
+    function handleGuest() {
+        auth.loginGuest()
+    }
+
     return (
-        <Box sx={{backgroundImage: "url(https://images.pexels.com/photos/1037992/pexels-photo-1037992.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)", backgroundSize: 'cover',
-        backgroundPosition: 'center', width: "100%", height: "90%"}}>
+        <Box sx={{
+            backgroundImage: "url(https://images.pexels.com/photos/1037992/pexels-photo-1037992.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)", backgroundSize: 'cover',
+            backgroundPosition: 'center', width: "100%", height: "90%"
+        }}>
             <Box
                 sx={{
                     position: 'absolute',
@@ -24,7 +35,7 @@ export default function SplashScreen() {
                 <Box sx={{ display: "flex", flexDirection: 'column', mt: 5, gap: 4, alignItems: "center" }}>
                     <Button href="/login/" variant="contained" sx={{ width: "50%", py: "8px", fontSize: 20 }}>Login</Button>
                     <Button href="/register/" variant="contained" sx={{ width: "50%", py: "8px", fontSize: 20 }}>Create Account</Button>
-                    <Button variant="contained" sx={{ width: "50%", py: "8px", fontSize: 20 }}>Continue as Guest</Button>
+                    <Button variant="contained" onClick={handleGuest} sx={{ width: "50%", py: "8px", fontSize: 20 }}>Continue as Guest</Button>
                 </Box>
             </Box>
         </Box>
