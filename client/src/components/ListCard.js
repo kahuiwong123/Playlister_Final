@@ -17,7 +17,6 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import { Button } from '@mui/material';
 import { darken } from '@mui/material';
 import AuthContext from '../auth';
 /*
@@ -32,6 +31,7 @@ function ListCard(props) {
     const { auth } = useContext(AuthContext)
     const [editActive, setEditActive] = useState(false);
     const [playlist, setPlaylist] = useState(null)
+    const [error, setError] = useState(false)
     const [text, setText] = useState("");
     const { list } = props;
     const [open, setOpen] = useState(false);
@@ -40,10 +40,12 @@ function ListCard(props) {
         setPlaylist(list)
     }, [list])
 
-
     useEffect(() => {
-
-    }, [store.screenType])
+        if (store) {
+            const nameList = store.idNamePairs.filter(lst => lst._id !== list._id).map(lst => lst.name)
+            setError(nameList.includes(text) || text === "")
+        }
+    }, [text])
 
     async function handleClick() {
         if (playlist.songs.length > 0) {
@@ -58,6 +60,7 @@ function ListCard(props) {
 
     function handleToggleEdit(event) {
         event.stopPropagation();
+        setText(list.name)
         toggleEdit();
     }
 
@@ -80,10 +83,13 @@ function ListCard(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
-            store.changeListName(id, text);
-            toggleEdit();
+            if (!error) {
+                store.changeListName(id, text);
+                toggleEdit();
+            }
         }
     }
+
     function handleUpdateText(event) {
         setText(event.target.value);
     }
@@ -101,6 +107,16 @@ function ListCard(props) {
     function handleLink(event) {
         event.stopPropagation()
         store.displayAndSearch("USERS", playlist.publishInfo.publisher)
+    }
+
+    function handleErrorText() {
+        if (error) {
+            return "This playlist name is not unique"
+        }
+
+        else if (text === "") {
+            return "Playlist name cannot be empty"
+        }
     }
 
     function background() {
@@ -165,6 +181,7 @@ function ListCard(props) {
     if (editActive) {
         cardElement =
             <TextField
+                error={error}
                 margin="normal"
                 required
                 fullWidth
@@ -175,6 +192,7 @@ function ListCard(props) {
                 className='list-card'
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
+                helperText={handleErrorText()}
                 defaultValue={list.name}
                 inputProps={{ style: { fontSize: 48 } }}
                 InputLabelProps={{ style: { fontSize: 24 } }}

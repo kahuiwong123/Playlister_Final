@@ -430,7 +430,7 @@ function GlobalStoreContextProvider(props) {
             const { name, songs } = store.currentList
             console.log(songs)
             let publishInfo = { isPublished: false, publishDate: null, publisher: auth.user.username }
-            const response = await api.createPlaylist(name, songs, auth.user.email, 0, 0, 0, publishInfo, [], [], [])
+            const response = await api.createPlaylist(store.checkDuplicateName(name), songs, auth.user.email, 0, 0, 0, publishInfo, [], [], [])
             if (response.status === 201) {
                 // tps.clearAllTransactions();
                 let newList = response.data.playlist;
@@ -483,7 +483,7 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.SET_LIST_PLAYING,
                     payload: playlist
                 })
-                
+
             }
         }
         temp(playlist)
@@ -515,7 +515,7 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
-        let newListName = "Untitled" + store.newListCounter;
+        let newListName = store.checkDuplicateName("Untitled");
         console.log(auth.user.username)
         let publishInfo = { isPublished: false, publishDate: null, publisher: auth.user.username }
         const response = await api.createPlaylist(newListName, [], auth.user.email, 0, 0, 0, publishInfo, [], [], []);
@@ -709,6 +709,26 @@ function GlobalStoreContextProvider(props) {
     }
 
 
+    store.checkDuplicateName = (newName) => {
+        
+        const nameList = store.idNamePairs.map(playlist => playlist.name)
+        if (!nameList.includes(newName)) {
+            return newName
+        }
+        const tempList = []
+        const match = newName.match(/(.*)(\s\((\d)\))$/)
+        let tempName = match ? match[1] : newName
+        console.log(tempName)
+        nameList.forEach(name => {
+            let temp = name.match(/(.*)(\s\((\d)\))$/)
+            console.log(temp)
+            if (temp && temp[1] === tempName) {
+                tempList.push(parseInt(temp[3]))
+            }
+        })
+        console.log(tempList)
+        return tempList.length !== 0 ? `${tempName} (${Math.max(...tempList) + 1})` : tempName + " (1)"
+    }
 
     // THE FOLLOWING 8 FUNCTIONS ARE FOR COORDINATING THE UPDATING
     // OF A LIST, WHICH INCLUDES DEALING WITH THE TRANSACTION STACK. THE
