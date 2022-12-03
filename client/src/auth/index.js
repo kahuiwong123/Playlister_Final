@@ -101,7 +101,7 @@ function AuthContextProvider(props) {
                     loggedIn: response.data.loggedIn,
                     user: response.data.user
                 }
-            });
+            }); 
         } else {
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,

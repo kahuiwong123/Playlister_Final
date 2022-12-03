@@ -69,7 +69,7 @@ const YoutubeScreen = () => {
   let display = store.listCurrentlyPlaying && !store.listCurrentlyPlaying.publishInfo.isPublished ? 'hidden' : 'visible'
 
   return (
-    <Box sx={{ width: "45%", border: 1 }}>
+    <Box sx={{ width: "45%" }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="basic tabs example" centered>
           <Tab label="Player" {...a11yProps(0)} />

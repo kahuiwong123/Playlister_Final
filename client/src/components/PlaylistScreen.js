@@ -16,7 +16,7 @@ const PlaylistScreen = () => {
         display()
     }, [store.screenType, store.idNamePairs, store.searchText, store.sortType])
 
-    useEffect(() => { 
+    useEffect(() => {
         const temp = async () => {
             await store.getTPS()
             display()
@@ -41,8 +41,8 @@ const PlaylistScreen = () => {
         if (store && (store.isAllLists() || store.isUsers())) {
             const getPlaylists = async () => {
                 let playlists = await store.getAllLists()
-                setList(playlists)
-                console.log(list)
+                const publishedLists = playlists.filter(playlist => { return playlist.publishInfo.isPublished })
+                setList(publishedLists)
                 search()
                 sort()
             }
@@ -86,7 +86,7 @@ const PlaylistScreen = () => {
     }
 
     return (
-        <Box sx={{ width: "55%", border: 1 }}>
+        <Box sx={{ width: "55%" }}>
             <Box sx={{ height: "450px", overflow: "scroll", px: 2, py: 1, border: "#bdbdbd" }}>
                 <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                     <Typography sx={{ display: resultFound, textAlign: "center", fontSize: 24 }}>- No Results Found -</Typography>

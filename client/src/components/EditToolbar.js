@@ -16,25 +16,29 @@ import { darken } from '@mui/material';
 function EditToolbar(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    function handleUndo() {
+    function handleUndo(event) {
+        event.stopPropagation()
         store.undo(props.playlist);
     }
-    function handleRedo() {
+    function handleRedo(event) {
+        event.stopPropagation()
         store.redo(props.playlist);
     }
 
-    function handlePublish() {
+    function handlePublish(event) {
+        event.stopPropagation()
         store.openPublishModal(props.playlist)
     }
 
-    function handleUnpublish() {
+    function handleUnpublish(event) {
+        event.stopPropagation()
         store.openUnpublishModal(props.playlist)
     }
 
-    function handleDuplicate() {
+    function handleDuplicate(event) {
+        event.stopPropagation()
         store.openDuplicateModal(props.playlist)
     }
-
 
     let display = !auth.notGuest  || (props.playlist && props.playlist.publishInfo.isPublished && props.playlist.ownerEmail !== auth.user.email) ? 'hidden' : 'visible'
 

@@ -13,7 +13,6 @@ export default function YouTubePlayerExample(props) {
     // YOUTUBE PLAYER AND EMBED IT IN YOUR SITE. IT ALSO
     // DEMONSTRATES HOW TO IMPLEMENT A PLAYLIST THAT MOVES
     // FROM ONE SONG TO THE NEXT
-
     const { store } = useContext(GlobalStoreContext);
     const [playlist, setPlaylist] = useState([])
     const [currentSong, setCurrentSong] = useState(0)
@@ -22,16 +21,13 @@ export default function YouTubePlayerExample(props) {
 
     let flag = store.listCurrentlyPlaying !== null && store.listCurrentlyPlaying[currentSong] !== null && store.listCurrentlyPlaying.songs.length !== 0
 
-
     // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
     useEffect(() => {
         if (store.listCurrentlyPlaying) {
             setCurrentSong(0)
             let list = store.listCurrentlyPlaying.songs.map(song => song.youTubeId)
             setPlaylist(list)
-            console.log(list)
-        } else {
-            setPlaylist([])
+            console.log("new list: " + list.length)
         }
     }, [store.listCurrentlyPlaying])
 
@@ -113,17 +109,17 @@ export default function YouTubePlayerExample(props) {
     function musicVideo() {
         if (flag) {
             return <YouTube
-            videoId={playlist[currentSong]}
-            opts={playerOptions}
-            onReady={onPlayerReady}
-            onStateChange={onPlayerStateChange} />
+                videoId={playlist[currentSong]}
+                opts={playerOptions}
+                onReady={onPlayerReady}
+                onStateChange={onPlayerStateChange} />
         }
-        return <Box sx={{height: "275px", width: "100%"}}>
-            <MusicOffIcon sx={{height: "100%", width: "100%"}} />
+        return <Box sx={{ height: "275px", width: "100%" }}>
+            <MusicOffIcon sx={{ height: "100%", width: "100%" }} />
         </Box>
     }
 
-    let textStyle = { pl: 3, fontSize: 16 }    
+    let textStyle = { pl: 3, fontSize: 16 }
     return (
         <Box style={{ display: props.index === 1 ? 'none' : 'block' }}>
             {musicVideo()}
@@ -131,21 +127,21 @@ export default function YouTubePlayerExample(props) {
                 <Typography sx={{ textAlign: "center" }}>Now Playing</Typography>
                 <Typography sx={textStyle}>Playlist: {flag && store.listCurrentlyPlaying.name}</Typography>
                 <Typography sx={textStyle}>Song #: {flag && currentSong + 1}</Typography>
-                <Typography sx={textStyle}>Title: {flag && store.listCurrentlyPlaying.songs[currentSong].title}</Typography>
-                <Typography sx={textStyle}>Artist: {flag && store.listCurrentlyPlaying.songs[currentSong].artist}</Typography>
+                <Typography sx={textStyle}>Title: {flag && store?.listCurrentlyPlaying?.songs[currentSong]?.title}</Typography>
+                <Typography sx={textStyle}>Artist: {flag && store?.listCurrentlyPlaying?.songs[currentSong]?.artist}</Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <Toolbar sx={{ bgcolor: "#bdbdbd", borderRadius: 8, mb: 2 }}>
-                    <IconButton onClick={handleRewind} disabled={currentSong === 0}>
+                    <IconButton onClick={handleRewind} disabled={currentSong === 0 || !store?.listCurrentlyPlaying}>
                         <FastRewindIcon fontSize='large' />
                     </IconButton>
-                    <IconButton onClick={handlePause} disabled={youtubeEvent.data === 2}>
+                    <IconButton onClick={handlePause} disabled={youtubeEvent.data === 2 || !store?.listCurrentlyPlaying}>
                         <StopIcon fontSize='large' />
                     </IconButton>
-                    <IconButton onClick={handlePlay} disabled={youtubeEvent.data === 1}>
+                    <IconButton onClick={handlePlay} disabled={youtubeEvent.data === 1 || !store?.listCurrentlyPlaying}>
                         <PlayArrowIcon fontSize='large' />
                     </IconButton>
-                    <IconButton onClick={handleForward}>
+                    <IconButton onClick={handleForward} disabled={!store?.listCurrentlyPlaying}>
                         <FastForwardIcon fontSize='large' />
                     </IconButton>
                 </Toolbar>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useContext, useState, useEffect } from 'react';
-import { Toolbar, IconButton, Box, TextField, Menu, MenuItem } from '@mui/material'
+import { Toolbar, IconButton, Box, TextField, Menu, MenuItem, Button, darken } from '@mui/material'
 import { GlobalStoreContext } from '../store';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
@@ -95,9 +95,9 @@ const PlaylistToolbar = (props) => {
 
                 endAdornment: (
                     <InputAdornment position="end">
-                        <IconButton onClick={handleReset} sx={{ color: "#757575" }}>
-                            <CancelIcon />
-                        </IconButton>
+                        <Button onClick={handleReset} variant="contained" endIcon={<CancelIcon />} sx={{ "&:hover": { backgroundColor: darken("#bdbdbd", 0.1) }, bgcolor: "#bdbdbd", fontSize: 10 }}>
+                            Reset Filter
+                        </Button>
                     </InputAdornment>
                 ),
 

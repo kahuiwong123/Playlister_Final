@@ -129,7 +129,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.CLOSE_CURRENT_LIST: {
                 return setStore({
                     currentModal: CurrentModal.NONE,
-                    idNamePairs: store.idNamePairs,
+                    idNamePairs: [],
                     currentList: null,
                     currentSongIndex: -1,
                     currentSong: null,
@@ -138,7 +138,7 @@ function GlobalStoreContextProvider(props) {
                     listIdMarkedForDeletion: null,
                     listMarkedForDeletion: null,
                     transactionList: {},
-                    listCurrentlyPlaying: store.listCurrentlyPlaying,
+                    listCurrentlyPlaying: null,
                     screenType: store.screenType,
                     searchText: store.searchText,
                     sortType: store.sortType
@@ -224,6 +224,7 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.SET_LIST_PLAYING: {
+                // console.log(payload)
                 return setStore({
                     currentModal: CurrentModal.NONE,
                     idNamePairs: store.idNamePairs,
@@ -399,10 +400,10 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.closeCurrentList = function () {
-        storeReducer({
-            type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
-            payload: {}
-        });
+        // storeReducer({
+        //     type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
+        //     payload: {}
+        // });
         history.push("/");
     }
 
@@ -436,7 +437,7 @@ function GlobalStoreContextProvider(props) {
 
     store.unpublishPlaylist = function () {
         let publishInfo = { isPublished: false, publishDate: null, publisher: auth.user.username }
-        const list = { ...store.currentList, publishInfo: publishInfo }
+        const list = { ...store.currentList, likes: 0, dislikes: 0, listens: 0, likedUsers: [], dislikedUsers: [], publishInfo: publishInfo }
         store.updateCurrentList(list)
     }
 
@@ -735,7 +736,7 @@ function GlobalStoreContextProvider(props) {
             }
         })
         console.log(tempList)
-        return tempList.length !== 0 ? `${tempName} (${Math.max(...tempList) + 1})` : tempName + " (1)"
+        return tempList.length !== 0 ? `${tempName}(${Math.max(...tempList) + 1})` : tempName + "(1)"
     }
 
     // THE FOLLOWING 8 FUNCTIONS ARE FOR COORDINATING THE UPDATING
@@ -771,7 +772,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setListPlaying = (playlist) => {
-        // console.log(playlist)
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_PLAYING,
             payload: playlist
@@ -789,6 +789,8 @@ function GlobalStoreContextProvider(props) {
         let response = await api.getPlaylists()
         if (response.data.success) {
             return response.data.playlists
+        } else {
+            return []
         }
     }
 
@@ -800,7 +802,11 @@ function GlobalStoreContextProvider(props) {
     // USING THE PROVIDED DATA AND PUTS THIS SONG AT INDEX
     store.createSong = function (playlist, index, song) {
         playlist.songs.splice(index, 0, song);
-        // NOW MAKE IT OFFICIAL
+        // NOW MAKE IT OFFICIAL   
+        if (playlist._id === store.listCurrentlyPlaying?._id) {
+            store.setListPlaying(playlist)
+            // store.listenPlaylist(playlist)
+        }
         store.updateCurrentList(playlist);
     }
     // THIS FUNCTION MOVES A SONG IN THE CURRENT LIST FROM
@@ -823,13 +829,21 @@ function GlobalStoreContextProvider(props) {
         }
 
         // NOW MAKE IT OFFICIAL
+        // if (playlist._id === store.listCurrentlyPlaying._id) {
+        //     store.setListPlaying(playlist)
+        // }
         store.updateCurrentList(playlist);
+
     }
     // THIS FUNCTION REMOVES THE SONG AT THE index LOCATION
     // FROM THE CURRENT LIST
     store.removeSong = function (playlist, index) {
         playlist.songs.splice(index, 1);
         // NOW MAKE IT OFFICIAL
+        if (playlist._id === store.listCurrentlyPlaying?._id) {
+            store.setListPlaying(playlist)
+            // store.listenPlaylist(playlist)
+        }
         store.updateCurrentList(playlist);
     }
     // THIS FUNCTION UPDATES THE TEXT IN THE ITEM AT index TO text
@@ -840,6 +854,9 @@ function GlobalStoreContextProvider(props) {
         song.youTubeId = songData.youTubeId;
 
         // NOW MAKE IT OFFICIAL
+        // if (playlist._id === store.listCurrentlyPlaying._id) {
+        //     store.setListPlaying(playlist)
+        // }
         store.updateCurrentList(playlist);
     }
     store.addNewSong = (playlist) => {
