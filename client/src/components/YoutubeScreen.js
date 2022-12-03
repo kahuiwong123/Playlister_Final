@@ -76,7 +76,7 @@ const YoutubeScreen = () => {
           <Tab label="Comments" {...a11yProps(1)} disabled={!store.listCurrentlyPlaying} />
         </Tabs>
       </Box>
-      <YouTubePlayerExample index={value} />
+      <YouTubePlayerExample index={value} playlist={store?.listCurrentlyPlaying?.songs?.map(song => song.youTubeId)}/>
       <TabPanel value={value} index={1} sx={{ height: "90%" }}>
         <List sx={{ height: "350px", overflow: "scroll", display: "flex", flexDirection: "column", gap: 1, alignItems: "left" }}>
           {commentSection()}

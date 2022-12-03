@@ -14,20 +14,19 @@ export default function YouTubePlayerExample(props) {
     // DEMONSTRATES HOW TO IMPLEMENT A PLAYLIST THAT MOVES
     // FROM ONE SONG TO THE NEXT
     const { store } = useContext(GlobalStoreContext);
-    const [playlist, setPlaylist] = useState([])
+    const { playlist } = props
     const [currentSong, setCurrentSong] = useState(0)
     const [youtubeEvent, setYoutubeEvent] = useState({})
     // THIS HAS THE YOUTUBE IDS FOR THE SONGS IN OUR PLAYLIST
 
-    let flag = store.listCurrentlyPlaying !== null && store.listCurrentlyPlaying[currentSong] !== null && store.listCurrentlyPlaying.songs.length !== 0
+    let flag = playlist && playlist[currentSong] && playlist.length !== 0
 
     // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
     useEffect(() => {
-        if (store.listCurrentlyPlaying) {
+        // let list = store.listCurrentlyPlaying.songs.map(song => song.youTubeId) 
+        // setPlaylist(list)
+        if (store?.listCurrentlyPlaying) {
             setCurrentSong(0)
-            let list = store.listCurrentlyPlaying.songs.map(song => song.youTubeId)
-            setPlaylist(list)
-            console.log("new list: " + list.length)
         }
     }, [store.listCurrentlyPlaying])
 
@@ -67,26 +66,11 @@ export default function YouTubePlayerExample(props) {
         let playerStatus = event.data;
         let player = event.target;
         setYoutubeEvent(event)
-        if (playerStatus === -1) {
-            // VIDEO UNSTARTED
-            console.log("-1 Video unstarted");
-        } else if (playerStatus === 0) {
+        if (playerStatus === 0) {
             // THE VIDEO HAS COMPLETED PLAYING
             console.log("0 Video ended");
             incSong();
             loadAndPlayCurrentSong(player);
-        } else if (playerStatus === 1) {
-            // THE VIDEO IS PLAYED
-            console.log("1 Video played");
-        } else if (playerStatus === 2) {
-            // THE VIDEO IS PAUSED
-            console.log("2 Video paused");
-        } else if (playerStatus === 3) {
-            // THE VIDEO IS BUFFERING
-            console.log("3 Video buffering");
-        } else if (playerStatus === 5) {
-            // THE VIDEO HAS BEEN CUED
-            console.log("5 Video cued");
         }
     }
 
@@ -125,7 +109,7 @@ export default function YouTubePlayerExample(props) {
             {musicVideo()}
             <Box sx={{ height: 120 }}>
                 <Typography sx={{ textAlign: "center" }}>Now Playing</Typography>
-                <Typography sx={textStyle}>Playlist: {flag && store.listCurrentlyPlaying.name}</Typography>
+                <Typography sx={textStyle}>Playlist: {flag && store?.listCurrentlyPlaying?.name}</Typography>
                 <Typography sx={textStyle}>Song #: {flag && currentSong + 1}</Typography>
                 <Typography sx={textStyle}>Title: {flag && store?.listCurrentlyPlaying?.songs[currentSong]?.title}</Typography>
                 <Typography sx={textStyle}>Artist: {flag && store?.listCurrentlyPlaying?.songs[currentSong]?.artist}</Typography>

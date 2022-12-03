@@ -469,11 +469,7 @@ function GlobalStoreContextProvider(props) {
             }
             let response = await api.updatePlaylistById(playlist._id, playlist)
             if (response.data.success) {
-                storeReducer({
-                    type: GlobalStoreActionType.SET_LIST_PLAYING,
-                    payload: playlist
-                })
-
+                store.setListPlaying(playlist)
             }
         }
         temp(playlist)
@@ -802,12 +798,16 @@ function GlobalStoreContextProvider(props) {
     // USING THE PROVIDED DATA AND PUTS THIS SONG AT INDEX
     store.createSong = function (playlist, index, song) {
         playlist.songs.splice(index, 0, song);
-        // NOW MAKE IT OFFICIAL   
-        if (playlist._id === store.listCurrentlyPlaying?._id) {
-            store.setListPlaying(playlist)
-            // store.listenPlaylist(playlist)
+        // NOW MAKE IT OFFICIAL
+        const temp = async () => {
+            let response = await api.updatePlaylistById(playlist._id, playlist)
+            if (response.data.success && playlist._id === store.listCurrentlyPlaying?._id) {
+                store.setListPlaying(playlist)
+            }
+            store.loadIdNamePairs()
         }
-        store.updateCurrentList(playlist);
+        temp()
+        // store.updateCurrentList(playlist);
     }
     // THIS FUNCTION MOVES A SONG IN THE CURRENT LIST FROM
     // start TO end AND ADJUSTS ALL OTHER ITEMS ACCORDINGLY
@@ -827,12 +827,15 @@ function GlobalStoreContextProvider(props) {
             }
             playlist.songs[end] = temp;
         }
-
         // NOW MAKE IT OFFICIAL
-        // if (playlist._id === store.listCurrentlyPlaying._id) {
-        //     store.setListPlaying(playlist)
-        // }
-        store.updateCurrentList(playlist);
+        const temp = async () => {
+            let response = await api.updatePlaylistById(playlist._id, playlist)
+            if (response.data.success && playlist._id === store.listCurrentlyPlaying?._id) {
+                store.setListPlaying(playlist)
+            }
+            store.loadIdNamePairs()
+        }
+        temp()
 
     }
     // THIS FUNCTION REMOVES THE SONG AT THE index LOCATION
@@ -840,11 +843,14 @@ function GlobalStoreContextProvider(props) {
     store.removeSong = function (playlist, index) {
         playlist.songs.splice(index, 1);
         // NOW MAKE IT OFFICIAL
-        if (playlist._id === store.listCurrentlyPlaying?._id) {
-            store.setListPlaying(playlist)
-            // store.listenPlaylist(playlist)
+        const temp = async () => {
+            let response = await api.updatePlaylistById(playlist._id, playlist)
+            if (response.data.success && playlist._id === store.listCurrentlyPlaying?._id) {
+                store.setListPlaying(playlist)
+            }
+            store.loadIdNamePairs()
         }
-        store.updateCurrentList(playlist);
+        temp()
     }
     // THIS FUNCTION UPDATES THE TEXT IN THE ITEM AT index TO text
     store.updateSong = function (playlist, index, songData) {
@@ -854,10 +860,14 @@ function GlobalStoreContextProvider(props) {
         song.youTubeId = songData.youTubeId;
 
         // NOW MAKE IT OFFICIAL
-        // if (playlist._id === store.listCurrentlyPlaying._id) {
-        //     store.setListPlaying(playlist)
-        // }
-        store.updateCurrentList(playlist);
+        const temp = async () => {
+            let response = await api.updatePlaylistById(playlist._id, playlist)
+            if (response.data.success && playlist._id === store.listCurrentlyPlaying?._id) {
+                store.setListPlaying(playlist)
+            }
+            store.loadIdNamePairs()
+        }
+        temp()
     }
     store.addNewSong = (playlist) => {
         store.addCreateSongTransaction(playlist,

@@ -22,6 +22,7 @@ export default function MUIRemoveSongModal(props) {
 
     function handleConfirmRemoveSong() {
         store.addRemoveSongTransaction();
+        store.hideModals();
     }
 
     function handleCancelRemoveSong() {
