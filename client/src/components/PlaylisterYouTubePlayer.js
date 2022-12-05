@@ -28,7 +28,7 @@ export default function YouTubePlayerExample(props) {
         if (store?.listCurrentlyPlaying) {
             setCurrentSong(0)
         }
-    }, [store.listCurrentlyPlaying])
+    }, [store?.listCurrentlyPlaying])
 
     const playerOptions = {
         height: '275px',

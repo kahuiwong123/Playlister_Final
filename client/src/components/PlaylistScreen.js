@@ -81,7 +81,7 @@ const PlaylistScreen = () => {
         }
 
         else if (list && store && store.sortByDate()) {
-            setList(prev => [].concat(prev).sort((a, b) => b.publishInfo.publishDate.dateData > a.publishInfo.publishDate.dateData))
+            setList(prev => [].concat(prev).sort((a, b) => b.publishInfo?.publishDate?.dateData > a.publishInfo?.publishDate?.dateData))
         }
     }
 
